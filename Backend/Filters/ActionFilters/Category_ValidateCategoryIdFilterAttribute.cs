@@ -10,7 +10,7 @@ namespace Backend.Filters.ActionFilters
         {
             base.OnActionExecuting(context);
 
-            var categoryId = context.ActionArguments["id"] as int?;
+            var categoryId = context.ActionArguments["categoryId"] as int?;
 
             if (categoryId.HasValue)
             {
