@@ -75,3 +75,5 @@ D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\obj\Debug\net
 D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\obj\Debug\net8.0\Backend.pdb
 D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
 D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\obj\Debug\net8.0\ref\Backend.dll
+D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\obj\Debug\net8.0\Backend.sourcelink.json
+D:\Shlomi\Programming\WebApps\ReactNative\Projects\ToDoApp\Backend\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
