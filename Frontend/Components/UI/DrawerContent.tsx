@@ -1,16 +1,32 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {ListItem, Icon} from '@rneui/themed';
+import {ListItem, Icon, Button} from '@rneui/themed';
 import Categories from '../Categories/Categories';
 import {DrawerContentProps} from '../../general/interfaces';
+import {useAppSelector, useAppDispatch} from '../../hooks/store';
+import {userAction} from '../../store/userSlice';
 
 export default function DrawerContent({
   screenChanger,
   closeDrawer,
 }: DrawerContentProps) {
+  const isLoggedIn = useAppSelector(state => state.user.loggedIn);
+
+  const dispatch = useAppDispatch();
+
   const navRoutes = [
-    {name: 'Home', icon: 'home', changeRoute: () => screenChanger('Home')},
-    {name: 'User', icon: 'user', changeRoute: () => screenChanger('User')},
+    {
+      name: 'Home',
+      icon: 'home',
+      iconType: 'feather',
+      changeRoute: () => screenChanger('Home'),
+    },
+    {
+      name: 'User',
+      icon: 'user',
+      iconType: 'feather',
+      changeRoute: () => screenChanger('User'),
+    },
   ];
 
   return (
@@ -27,7 +43,7 @@ export default function DrawerContent({
           key={index}
           containerStyle={styles.listItem}
           onPress={route?.changeRoute}>
-          <Icon name={route?.icon} type="feather" />
+          <Icon name={route?.icon} type={route?.iconType} />
           <ListItem.Content>
             <ListItem.Title style={styles.listTitle}>
               {route?.name}
@@ -35,7 +51,8 @@ export default function DrawerContent({
           </ListItem.Content>
         </ListItem>
       ))}
-      <Categories />
+      {isLoggedIn ? <Categories /> : null}
+      <Button title="Logout" onPress={() => dispatch(userAction.logout())} />
     </View>
   );
 }
