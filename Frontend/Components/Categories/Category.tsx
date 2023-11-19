@@ -1,10 +1,26 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 import {ListItem} from '@rneui/themed';
-import {CategoriesProps} from '../../general/interfaces';
+import {CategoriesProps, ICategory} from '../../general/interfaces';
 
 export default function Category({category}: CategoriesProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [subCategories, setSubCategories] = useState<ICategory[]>([]);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await fetch(
+          `http://192.168.1.173:8080/api/Category/${category?.id}/subcategories`,
+        );
+        const data = await response.json();
+        setSubCategories(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchSubCategories();
+  }, [category]);
 
   return (
     <ListItem.Accordion
@@ -19,15 +35,17 @@ export default function Category({category}: CategoriesProps): JSX.Element {
       }
       isExpanded={expanded}
       onPress={() => setExpanded(!expanded)}>
-      {category?.subCategories.map(sub => (
-        <ListItem key={sub?.id} containerStyle={styles.subListItem}>
-          <ListItem.Content>
-            <ListItem.Title style={styles.listTitle}>
-              {sub?.name}
-            </ListItem.Title>
-          </ListItem.Content>
-        </ListItem>
-      ))}
+      {subCategories
+        ? subCategories?.map(sub => (
+            <ListItem key={sub?.id} containerStyle={styles.subListItem}>
+              <ListItem.Content>
+                <ListItem.Title style={styles.listTitle}>
+                  {sub?.name}
+                </ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))
+        : null}
     </ListItem.Accordion>
   );
 }
