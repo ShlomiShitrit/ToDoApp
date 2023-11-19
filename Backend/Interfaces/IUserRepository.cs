@@ -11,6 +11,7 @@ namespace Backend.Interfaces
         public bool UpdateUser(User user);
         public bool DeleteUser(User user);
         public ICollection<Category> GetCategories(int userId);
+        public User? GetUserByEmail(string email);
         public bool Save();
     }
 }

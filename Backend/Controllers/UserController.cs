@@ -88,5 +88,20 @@ namespace Backend.Controllers
 
             return Ok(categories);
         }
+
+        [HttpGet("email/{userEmail}")]
+        public IActionResult GetUserByEmail(string userEmail)
+        {
+            var user = _mapper.Map<UserDto>(_userRepository.GetUserByEmail(userEmail));
+
+            if (user == null)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(user);
+
+        }
     }
 }

@@ -24,6 +24,11 @@ namespace Backend.Repositories
             return _context.Categories.Where(c => c.UserId == userId).OrderBy(c => c.Id).ToList();
         }
 
+        public User? GetUserByEmail(string email)
+        {
+            return _context.Users.Where(u => u.Email == email).FirstOrDefault();
+        }
+
         public User? GetUserById(int id)
         {
             return _context.Users.Where(u => u.Id == id).FirstOrDefault();
