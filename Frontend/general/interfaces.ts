@@ -18,6 +18,17 @@ export interface ITask {
   category: string;
 }
 
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+export interface SignupFormProps {
+  dataHandler: (data: IUser) => void;
+}
+
 export interface GeneralCategory {
   id: number;
   name: string;
@@ -26,10 +37,15 @@ export interface GeneralCategory {
 export interface ISubCategory extends GeneralCategory {}
 
 export interface ICategory extends GeneralCategory {
-  subCategories: ISubCategory[];
+  subCategories?: ISubCategory[];
 }
 
 export interface DrawerContentProps {
   screenChanger: (screenName: screens) => void;
   closeDrawer: () => void;
+}
+
+export interface SignupDialogProps {
+  open: boolean;
+  onBackPress: () => void;
 }

@@ -1,1 +1,1 @@
-export type screens = 'Home' | 'User' | 'Categories';
+export type screens = 'Home' | 'User' | 'Categories' | 'Login';
