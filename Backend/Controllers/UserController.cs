@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Interfaces;
-using Backend.Repositories;
-using Backend.Data;
+using Backend.Filters.ActionFilters;
 using Backend.Dto;
 using AutoMapper;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -12,17 +13,18 @@ namespace Backend.Controllers
     [ApiController]
     public class UserController(
         IUserRepository userRepository,
-        ICategoryRepository categoryRepository,
         IMapper mapper
     ) : Controller
     {
         private readonly IUserRepository _userRepository = userRepository;
-        private readonly ICategoryRepository _categoryRepository = categoryRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetUsers()
         {
+            var user = GetCurrentUser();
+            Console.WriteLine($"Current user: id: {user?.Id} email: {user?.Email} role: {user?.Role}");
             var users = _mapper.Map<List<UserDto>>(_userRepository.GetUsers());
 
             if (!ModelState.IsValid)
@@ -32,6 +34,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{userId}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetUser(int userId)
         {
             if (!_userRepository.UserExists(userId))
@@ -46,6 +49,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [User_ValidateUserSignupFilter]
         public IActionResult CreateUser([FromBody] UserDto userCreate)
         {
             if (userCreate == null)
@@ -75,13 +79,19 @@ namespace Backend.Controllers
             return Ok("Successfully created");
         }
 
-        [HttpGet("{userId}/categories")]
-        public IActionResult GetCategoriesOfUser(int userId)
+        [HttpGet("categories")]
+        [Authorize]
+        public IActionResult GetCategoriesOfUser()
         {
-            if (!_userRepository.UserExists(userId))
+            var currentUser = GetCurrentUser();
+
+            if (currentUser == null)
+                return NotFound("No user is logged in");
+
+            if (!_userRepository.UserExists(currentUser.Id))
                 return NotFound();
 
-            var categories = _mapper.Map<List<CategoryDto>>(_userRepository.GetCategories(userId));
+            var categories = _mapper.Map<List<CategoryDto>>(_userRepository.GetCategories(currentUser.Id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -89,19 +99,20 @@ namespace Backend.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("email/{userEmail}")]
-        public IActionResult GetUserByEmail(string userEmail)
+        internal User GetCurrentUser()
         {
-            var user = _mapper.Map<UserDto>(_userRepository.GetUserByEmail(userEmail));
+            var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;
 
-            if (user == null)
-                return NotFound();
+            var userClaims = identity?.Claims;
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(user);
-
+            return new User
+            {
+                Id = Convert.ToInt32(userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value),
+                Email = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Email)?.Value ?? "is null",
+                FirstName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.GivenName)?.Value ?? "is null",
+                LastName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Surname)?.Value ?? "is null",
+                Role = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Role)?.Value ?? "is null",
+            };
         }
     }
 }

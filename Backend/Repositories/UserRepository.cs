@@ -24,9 +24,9 @@ namespace Backend.Repositories
             return _context.Categories.Where(c => c.UserId == userId).OrderBy(c => c.Id).ToList();
         }
 
-        public User? GetUserByEmail(string email)
+        public User? GetUserByEmailAndPassword(string email, string password)
         {
-            return _context.Users.Where(u => u.Email == email).FirstOrDefault();
+            return _context.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();
         }
 
         public User? GetUserById(int id)
@@ -55,5 +55,6 @@ namespace Backend.Repositories
         {
             return _context.Users.Any(u => u.Id == id);
         }
+
     }
 }

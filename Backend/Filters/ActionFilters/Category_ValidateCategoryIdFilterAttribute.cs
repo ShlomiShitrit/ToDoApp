@@ -1,5 +1,3 @@
-using Backend.Repositories;
-using Backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 namespace Backend.Filters.ActionFilters

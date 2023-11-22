@@ -7,6 +7,7 @@ namespace Backend.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public ICollection<Category> Categories { get; set; }
+        public string Role { get; set; }
+        public ICollection<Category>? Categories { get; set; }
     }
 }
