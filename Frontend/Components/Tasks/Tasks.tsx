@@ -7,13 +7,13 @@ export default function Tasks({tasks}: TasksProps): JSX.Element {
   return (
     <>
       {tasks.map(task => (
-        <ListItem key={task.id} containerStyle={styles.listItem}>
+        <ListItem key={task?.id} containerStyle={styles.listItem}>
           <ListItem.Content>
             <ListItem.Title style={styles.listTitle}>
-              {task.description}
+              {task?.title}
             </ListItem.Title>
             <ListItem.Subtitle style={styles.listSubtitle}>
-              {task.category}
+              {task?.subTitle}
             </ListItem.Subtitle>
           </ListItem.Content>
         </ListItem>

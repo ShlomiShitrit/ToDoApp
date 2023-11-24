@@ -9,7 +9,7 @@ export default function Header({openDrawer}: HeaderProps) {
   return (
     <SafeAreaProvider>
       <HeaderComp
-        leftComponent={
+        rightComponent={
           <View>
             <Icon
               onPress={openDrawer}

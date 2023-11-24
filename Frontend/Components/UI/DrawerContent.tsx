@@ -9,6 +9,8 @@ import {userAction} from '../../store/userSlice';
 export default function DrawerContent({
   screenChanger,
   closeDrawer,
+  setCurrentCategory,
+  setIsSubCategory,
 }: DrawerContentProps) {
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
 
@@ -43,16 +45,26 @@ export default function DrawerContent({
           key={index}
           containerStyle={styles.listItem}
           onPress={route?.changeRoute}>
-          <Icon name={route?.icon} type={route?.iconType} />
           <ListItem.Content>
             <ListItem.Title style={styles.listTitle}>
               {route?.name}
             </ListItem.Title>
           </ListItem.Content>
+          <Icon name={route?.icon} type={route?.iconType} />
         </ListItem>
       ))}
-      {isLoggedIn ? <Categories /> : null}
-      <Button title="Logout" onPress={() => dispatch(userAction.logout())} />
+      {isLoggedIn ? (
+        <Categories
+          setCurrentCategory={setCurrentCategory}
+          setIsSubCategory={setIsSubCategory}
+          setCurrentScreen={screenChanger}
+        />
+      ) : null}
+      <Button
+        title="Logout"
+        containerStyle={styles.button}
+        onPress={() => dispatch(userAction.logout())}
+      />
     </View>
   );
 }
@@ -63,15 +75,9 @@ const styles = StyleSheet.create({
     paddingTop: 25,
     backgroundColor: '#262c2e',
   },
-  paragraph: {
-    padding: 16,
-    fontSize: 15,
-    color: 'black',
-    textAlign: 'center',
-  },
   icon: {
     marginTop: 10,
-    marginLeft: 250,
+    marginRight: 250,
   },
   listItem: {
     backgroundColor: '#262c2e',
@@ -82,5 +88,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    position: 'absolute',
+    right: 0,
+  },
+  button: {
+    marginTop: 30,
+    width: '30%',
+    borderRadius: 20,
+    alignSelf: 'center',
   },
 });

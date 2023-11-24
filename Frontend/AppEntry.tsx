@@ -9,9 +9,14 @@ import DrawerContent from './Components/UI/DrawerContent';
 import {screens} from './general/types';
 import LoginScreen from './Components/Screens/LoginScreen';
 import {useAppSelector} from './hooks/store';
+import {ICategory} from './general/interfaces';
+import {EMPTY_CATEGORY} from './general/resources';
 
 export default function AppEntry() {
   const [currentScreen, setCurrentScreen] = useState('Home' as screens);
+  const [currentCategory, setCurrentCategory] =
+    useState<ICategory>(EMPTY_CATEGORY);
+  const [isSubCategory, setIsSubCategory] = useState<boolean>(false);
 
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
 
@@ -61,6 +66,10 @@ export default function AppEntry() {
           <DrawerContent
             screenChanger={changeScreen}
             closeDrawer={() => drawer.current?.closeDrawer()}
+            setCurrentCategory={(category: ICategory) =>
+              setCurrentCategory(category)
+            }
+            setIsSubCategory={(isSub: boolean) => setIsSubCategory(isSub)}
           />
         )}>
         <Header openDrawer={() => drawer.current?.openDrawer()} />
@@ -68,7 +77,10 @@ export default function AppEntry() {
         {currentScreen === 'Home' && isLoggedIn ? <HomeScreen /> : null}
         {currentScreen === 'User' && isLoggedIn ? <UserScreen /> : null}
         {currentScreen === 'Categories' && isLoggedIn ? (
-          <CategoriesScreen />
+          <CategoriesScreen
+            category={currentCategory}
+            isSubCategory={isSubCategory}
+          />
         ) : null}
       </DrawerLayoutAndroid>
     </ThemeProvider>
