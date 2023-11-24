@@ -1,6 +1,7 @@
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Repositories
 {
@@ -57,4 +58,5 @@ namespace Backend.Repositories
         }
 
     }
+
 }

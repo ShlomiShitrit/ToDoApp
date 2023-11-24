@@ -3,16 +3,22 @@ using Backend.Dto;
 using Backend.Interfaces;
 using AutoMapper;
 using Backend.Models;
-using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubCategoryController(ISubCategoryRepository subCategoryRepository, ICategoryRepository categoryRepository, IMapper mapper) : Controller
+    public class SubCategoryController(
+        ISubCategoryRepository subCategoryRepository,
+        ICategoryRepository categoryRepository,
+        IUserRepository userRepository,
+        IMapper mapper) : Controller
     {
         private readonly ISubCategoryRepository _subCategoryRepository = subCategoryRepository;
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly IUserRepository _userRepository = userRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
@@ -83,17 +89,53 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{subCategoryId}/tasks")]
+        [Authorize]
         public IActionResult GetTasks(int subCategoryId)
         {
-            if (!_subCategoryRepository.SubCategoryExists(subCategoryId))
-                return NotFound();
+            var currentUser = GetCurrentUser();
 
-            var tasks = _mapper.Map<List<TaskDto>>(_subCategoryRepository.GetTasks(subCategoryId));
+            if (!_subCategoryRepository.SubCategoryExists(subCategoryId))
+                return NotFound("No subcategory found");
+
+            var subCategory = _subCategoryRepository.GetSubCategoryById(subCategoryId);
+            var categoryId = subCategory?.CategoryId;
+            var categoryOfUser = _userRepository.GetCategories(currentUser.Id).Where(c => c.Id == categoryId).FirstOrDefault();
+
+            if (categoryOfUser == null)
+                return NotFound("User don't have a category with this id");
+
+            var subCategories = _categoryRepository.GetSubCategories(categoryOfUser.Id);
+
+            if (subCategories == null)
+                return NotFound("No sub categories found for this user");
+
+            var authSubCategory = subCategories.Where(sc => sc.Id == subCategoryId).FirstOrDefault();
+
+            if (authSubCategory == null)
+                return NotFound("This user don't have a sub category with this id");
+
+            var tasks = _mapper.Map<List<TaskDto>>(_subCategoryRepository.GetTasks(authSubCategory.Id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(tasks);
+        }
+
+        internal User GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;
+
+            var userClaims = identity?.Claims;
+
+            return new User
+            {
+                Id = Convert.ToInt32(userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value),
+                Email = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Email)?.Value ?? "is null",
+                FirstName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.GivenName)?.Value ?? "is null",
+                LastName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Surname)?.Value ?? "is null",
+                Role = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Role)?.Value ?? "is null",
+            };
         }
     }
 

@@ -4,6 +4,9 @@ using Backend.Interfaces;
 using Backend.Filters.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 namespace Backend.Controllers
 {
     [Route("api/[controller]")]
@@ -19,6 +22,7 @@ namespace Backend.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetCategories()
         {
             var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
@@ -30,6 +34,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{categoryId}")]
+        [Authorize(Roles = "Admin")]
         [Category_ValidateCategoryIdFilter]
         public IActionResult GetCategory(int categoryId)
         {
@@ -47,6 +52,7 @@ namespace Backend.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateCategory([FromQuery] int userId, [FromBody] CategoryDto categoryCreate)
         {
             if (categoryCreate == null)
@@ -87,12 +93,23 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{categoryId}/subcategories")]
+        [Authorize]
         public IActionResult GetSubCategories(int categoryId)
         {
             if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
-            var subCategories = _mapper.Map<List<SubCategoryDto>>(_categoryRepository.GetSubCategories(categoryId));
+            var currentUser = GetCurrentUser();
+
+            var categories = _mapper.Map<List<CategoryDto>>(_userRepository.GetCategories(currentUser.Id));
+
+            var category = categories.Where(c => c.Id == categoryId).FirstOrDefault();
+
+            if (category == null)
+                return NotFound("The current user don't have a category with this id");
+
+            var newCategoryId = category.Id;
+            var subCategories = _mapper.Map<List<SubCategoryDto>>(_categoryRepository.GetSubCategories(newCategoryId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -101,17 +118,41 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{categoryId}/tasks")]
+        [Authorize]
         public IActionResult GetTasks(int categoryId)
         {
             if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
-            var tasks = _mapper.Map<List<TaskDto>>(_categoryRepository.GetTasks(categoryId));
+            var currentUser = GetCurrentUser();
+
+            var authCategory = _userRepository.GetCategories(currentUser.Id).Where(c => c.Id == categoryId).FirstOrDefault();
+
+            if (authCategory == null)
+                return NotFound("This user don't have a category with this id");
+
+            var tasks = _mapper.Map<List<TaskDto>>(_categoryRepository.GetTasks(authCategory.Id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(tasks);
+        }
+
+        internal User GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;
+
+            var userClaims = identity?.Claims;
+
+            return new User
+            {
+                Id = Convert.ToInt32(userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value),
+                Email = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Email)?.Value ?? "is null",
+                FirstName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.GivenName)?.Value ?? "is null",
+                LastName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Surname)?.Value ?? "is null",
+                Role = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Role)?.Value ?? "is null",
+            };
         }
     }
 }

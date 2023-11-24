@@ -23,8 +23,6 @@ namespace Backend.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult GetUsers()
         {
-            var user = GetCurrentUser();
-            Console.WriteLine($"Current user: id: {user?.Id} email: {user?.Email} role: {user?.Role}");
             var users = _mapper.Map<List<UserDto>>(_userRepository.GetUsers());
 
             if (!ModelState.IsValid)
@@ -97,6 +95,20 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
 
             return Ok(categories);
+        }
+
+        [HttpGet("userinfo")]
+        [Authorize]
+        public IActionResult GetCurrentUserInfo()
+        {
+            var user = GetCurrentUser();
+            if (user == null)
+                return NotFound("No user is logged in");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(user);
         }
 
         internal User GetCurrentUser()

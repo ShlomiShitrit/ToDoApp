@@ -18,7 +18,7 @@ namespace Backend.Controllers
         readonly private IUserRepository _userRepository = userRepository;
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDto userLogin)
         {
             var user = Authenticate(userLogin);
@@ -62,5 +62,6 @@ namespace Backend.Controllers
             return currentUser;
 
         }
+
     }
 }
