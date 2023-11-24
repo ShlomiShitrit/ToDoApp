@@ -3,31 +3,31 @@ import {View} from 'react-native';
 import {Dialog} from '@rneui/themed';
 import SignupForm from './SignupForm';
 import {IUser, SignupDialogProps} from '../../general/interfaces';
+import {EMPTY_USER} from '../../general/resources';
 
 export default function SignupDialog({
   open,
   onBackPress,
 }: SignupDialogProps): JSX.Element {
-  const [data, setData] = useState<IUser>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  });
+  const [data, setData] = useState<IUser>(EMPTY_USER);
 
   const dataHandler = useCallback((newData: IUser) => {
     setData(newData);
   }, []);
 
-  const submitHandler = () => {
-    fetch('http://192.168.1.173:8080/api/User', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data),
-    })
-      .then(response => response.json())
-      .then(json => console.log(json))
-      .catch(err => console.log(err));
+  const submitHandler = async () => {
+    try {
+      const response = await fetch('http://192.168.1.173:8080/api/User', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+      });
+      const resData = response.json();
+      console.log(resData);
+    } catch (error) {
+      // TODO: Add error handling
+      console.log(error);
+    }
     onBackPress();
   };
   return (
