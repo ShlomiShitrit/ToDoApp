@@ -8,17 +8,30 @@ export interface TasksProps {
   tasks: ITask[];
 }
 
-export interface CategoriesProps {
+export interface GeneralCategoryProp {
   category: ICategory;
+}
+
+export interface CategoryProps extends CategoriesProps, GeneralCategoryProp {}
+
+export interface CategoryScreenProps extends GeneralCategoryProp {
+  isSubCategory: boolean;
+}
+
+export interface CategoriesProps {
+  setCurrentCategory: (category: ICategory) => void;
+  setIsSubCategory: (isSubCategory: boolean) => void;
+  setCurrentScreen: (screenName: screens) => void;
 }
 
 export interface ITask {
   id: number;
-  description: string;
-  category: string;
+  title: string;
+  subTitle: string;
 }
 
 export interface IUser {
+  userId?: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -43,9 +56,17 @@ export interface ICategory extends GeneralCategory {
 export interface DrawerContentProps {
   screenChanger: (screenName: screens) => void;
   closeDrawer: () => void;
+  setCurrentCategory: (category: ICategory) => void;
+  setIsSubCategory: (isSubCategory: boolean) => void;
 }
 
 export interface SignupDialogProps {
   open: boolean;
   onBackPress: () => void;
+}
+
+export interface UserSliceState {
+  userInfo: IUser;
+  token: string;
+  loggedIn: boolean;
 }
