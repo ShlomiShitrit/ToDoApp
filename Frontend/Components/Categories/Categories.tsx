@@ -9,7 +9,7 @@ import {API_HOST} from '@env';
 export default function Categories({
   setCurrentCategory,
   setIsSubCategory,
-  setCurrentScreen,
+  screenChanger,
 }: CategoriesProps) {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -62,7 +62,7 @@ export default function Categories({
                 category={category}
                 setCurrentCategory={setCurrentCategory}
                 setIsSubCategory={setIsSubCategory}
-                setCurrentScreen={setCurrentScreen}
+                screenChanger={screenChanger}
               />
             ))
           : null}

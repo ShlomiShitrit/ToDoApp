@@ -50,9 +50,11 @@ export default function AppEntry() {
     },
   });
 
-  const changeScreen = (screen: screens) => {
+  const screenChanger = (screen: screens, isSub: boolean = false) => {
     setCurrentScreen(screen);
-    drawer.current?.closeDrawer();
+    if (isSub) {
+      drawer.current?.closeDrawer();
+    }
   };
 
   return (
@@ -64,7 +66,7 @@ export default function AppEntry() {
         drawerPosition="left"
         renderNavigationView={() => (
           <DrawerContent
-            screenChanger={changeScreen}
+            screenChanger={screenChanger}
             closeDrawer={() => drawer.current?.closeDrawer()}
             setCurrentCategory={(category: ICategory) =>
               setCurrentCategory(category)
