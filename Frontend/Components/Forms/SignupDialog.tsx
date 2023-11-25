@@ -4,6 +4,7 @@ import {Dialog} from '@rneui/themed';
 import SignupForm from './SignupForm';
 import {IUser, SignupDialogProps} from '../../general/interfaces';
 import {EMPTY_USER} from '../../general/resources';
+import {API_HOST} from '@env';
 
 export default function SignupDialog({
   open,
@@ -17,7 +18,7 @@ export default function SignupDialog({
 
   const submitHandler = async () => {
     try {
-      const response = await fetch('http://192.168.1.173:8080/api/User', {
+      const response = await fetch(`${API_HOST}api/User`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data),

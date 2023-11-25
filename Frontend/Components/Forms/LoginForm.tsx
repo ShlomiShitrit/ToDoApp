@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Button, Input} from '@rneui/themed';
 import {useAppDispatch, useAppSelector} from '../../hooks/store';
 import {userAction} from '../../store/userSlice';
+import {API_HOST, LOGIN_DEFAULT_EMAIL, LOGIN_DEFAULT_PASSWORD} from '@env';
 
 export default function LoginForm() {
   const [email, setEmail] = useState<string>('');
@@ -13,7 +14,7 @@ export default function LoginForm() {
 
   const loginUser = async () => {
     try {
-      const response = await fetch('http://192.168.1.173:8080/api/Auth/login', {
+      const response = await fetch(`${API_HOST}api/Auth/login`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({email, password}),
@@ -27,15 +28,35 @@ export default function LoginForm() {
     }
   };
 
+  // TODO: Remove this useEffect when the app is ready for production
+  useEffect(() => {
+    const loginDefaultUser = async () => {
+      try {
+        const response = await fetch(`${API_HOST}api/Auth/login`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            email: LOGIN_DEFAULT_EMAIL,
+            password: LOGIN_DEFAULT_PASSWORD,
+          }),
+        });
+
+        const token = await response.text();
+        dispatch(userAction.setToken(token));
+        dispatch(userAction.setLoggedIn(true));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loginDefaultUser();
+  }, [dispatch]);
+
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await fetch(
-          'http://192.168.1.173:8080/api/User/userinfo',
-          {
-            headers: {Authorization: `Bearer ${userToken}`},
-          },
-        );
+        const response = await fetch(`${API_HOST}api/User/userinfo`, {
+          headers: {Authorization: `Bearer ${userToken}`},
+        });
         const userInfo = await response.json();
         dispatch(userAction.setUser(userInfo));
       } catch (error) {

@@ -78,3 +78,5 @@ Backend.AssemblyInfoInputs.cache
 Backend.sourcelink.json
 
 Backend/bin/Debug/net8.0/Backend.exe
+.env.development.local
+.env.production.local

@@ -4,6 +4,7 @@ import {Text} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import {API_HOST} from '@env';
 
 export default function CategoriesScreen({
   category,
@@ -19,7 +20,7 @@ export default function CategoriesScreen({
         const url = isSubCategory
           ? `SubCategory/${category?.id}/tasks`
           : `Category/${category?.id}/tasks`;
-        const response = await fetch('http://192.168.1.173:8080/api/' + url, {
+        const response = await fetch(`${API_HOST}api/` + url, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },

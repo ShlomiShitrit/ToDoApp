@@ -4,6 +4,7 @@ import {ListItem, Icon} from '@rneui/themed';
 import Category from './Category';
 import {ICategory, CategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import {API_HOST} from '@env';
 
 export default function Categories({
   setCurrentCategory,
@@ -19,14 +20,11 @@ export default function Categories({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          'http://192.168.1.173:8080/api/User/categories',
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
+        const response = await fetch(`${API_HOST}api/User/categories`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
           },
-        );
+        });
         const data = await response.json();
         setCategories(data);
       } catch (error) {

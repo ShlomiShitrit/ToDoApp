@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import {ListItem} from '@rneui/themed';
 import {CategoryProps, ICategory} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import {API_HOST} from '@env';
 
 export default function Category({
   category,
@@ -19,7 +20,7 @@ export default function Category({
     const fetchSubCategories = async () => {
       try {
         const response = await fetch(
-          `http://192.168.1.173:8080/api/Category/${category?.id}/subcategories`,
+          `${API_HOST}api/Category/${category?.id}/subcategories`,
           {
             headers: {
               Authorization: `Bearer ${userToken}`,
