@@ -31,7 +31,6 @@ export default function AppEntry() {
       Platform.OS === 'android'
         ? NativeModules.I18nManager.localeIdentifier
         : null;
-    console.log(deviceLanguage);
 
     if (deviceLanguage !== null) {
       if (deviceLanguage === 'iw_IL') {
@@ -42,7 +41,6 @@ export default function AppEntry() {
     }
   }, [dispatch]);
 
-  
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
 
   const drawer = useRef<DrawerLayoutAndroid>(null);
