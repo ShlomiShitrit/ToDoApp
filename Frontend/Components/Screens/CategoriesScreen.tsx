@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
 import {Text} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import {API_HOST} from '@env';
+
+const windowHeight = Dimensions.get('window').height;
 
 export default function CategoriesScreen({
   category,
@@ -52,7 +54,7 @@ export default function CategoriesScreen({
 
 const styles = StyleSheet.create({
   container: {
-    height: '80%',
+    height: windowHeight * 0.8,
     flexGrow: 1,
     justifyContent: 'center',
     paddingTop: '10%',
