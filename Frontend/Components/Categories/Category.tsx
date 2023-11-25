@@ -9,7 +9,7 @@ export default function Category({
   category,
   setCurrentCategory,
   setIsSubCategory,
-  setCurrentScreen,
+  screenChanger,
 }: CategoryProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
@@ -43,13 +43,13 @@ export default function Category({
     if (!isSub) {
       setExpanded(!expanded);
       setIsSubCategory(false);
+      setCurrentCategory(clickedCategory);
+      screenChanger('Categories');
     } else {
       setIsSubCategory(true);
+      setCurrentCategory(clickedCategory);
+      screenChanger('Categories', true);
     }
-    console.log(clickedCategory);
-
-    setCurrentCategory(clickedCategory);
-    setCurrentScreen('Categories');
   };
 
   return (

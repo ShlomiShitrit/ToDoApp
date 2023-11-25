@@ -21,7 +21,7 @@ export interface CategoryScreenProps extends GeneralCategoryProp {
 export interface CategoriesProps {
   setCurrentCategory: (category: ICategory) => void;
   setIsSubCategory: (isSubCategory: boolean) => void;
-  setCurrentScreen: (screenName: screens) => void;
+  screenChanger: (screenName: screens, isSub?: boolean) => void;
 }
 
 export interface ITask {

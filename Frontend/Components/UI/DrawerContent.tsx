@@ -57,7 +57,7 @@ export default function DrawerContent({
         <Categories
           setCurrentCategory={setCurrentCategory}
           setIsSubCategory={setIsSubCategory}
-          setCurrentScreen={screenChanger}
+          screenChanger={screenChanger}
         />
       ) : null}
       <Button
