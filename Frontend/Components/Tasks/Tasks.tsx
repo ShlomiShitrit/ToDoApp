@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ListItem, Text} from '@rneui/themed';
 import {ITask, TasksProps} from '../../general/interfaces';
+import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
 
 export default function Tasks({
@@ -10,6 +11,8 @@ export default function Tasks({
   isSubCategory,
 }: TasksProps): JSX.Element {
   const [tasks, setTasks] = useState<ITask[]>([]);
+
+  const {dir} = useLang();
 
   useEffect(() => {
     if (initialTasks && initialTasks.length > 0) {
@@ -57,18 +60,25 @@ export default function Tasks({
   return (
     <>
       {tasks.map(task => (
-        <ListItem key={task?.id} containerStyle={styles.listItem}>
+        <ListItem
+          key={task?.id}
+          containerStyle={[
+            styles.container,
+            dir === 'rtl' ? styles.alignItemsRtl : styles.alignItemsLtr,
+          ]}>
           <ListItem.Content>
-            <View style={styles.listItemContent}>
-              <ListItem.CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedColor="white"
-                iconType="material-community"
-                checkedIcon="checkbox-marked"
-                uncheckedIcon="checkbox-blank-outline"
-                checked={task?.checked}
-                onPress={() => checkTaskHandler(task)}
-              />
+            <View style={styles.rowContainer}>
+              {dir === 'ltr' ? (
+                <ListItem.CheckBox
+                  containerStyle={styles.checkBoxContainerLtr}
+                  checkedColor="white"
+                  iconType="material-community"
+                  checkedIcon="checkbox-marked"
+                  uncheckedIcon="checkbox-blank-outline"
+                  checked={task?.checked}
+                  onPress={() => checkTaskHandler(task)}
+                />
+              ) : null}
               <ListItem.Title>
                 <Text
                   style={
@@ -77,6 +87,17 @@ export default function Tasks({
                   {task?.title}
                 </Text>
               </ListItem.Title>
+              {dir === 'rtl' ? (
+                <ListItem.CheckBox
+                  containerStyle={styles.checkBoxContainerRtl}
+                  checkedColor="white"
+                  iconType="material-community"
+                  checkedIcon="checkbox-marked"
+                  uncheckedIcon="checkbox-blank-outline"
+                  checked={task?.checked}
+                  onPress={() => checkTaskHandler(task)}
+                />
+              ) : null}
             </View>
             <ListItem.Subtitle
               style={
@@ -92,10 +113,23 @@ export default function Tasks({
 }
 
 const styles = StyleSheet.create({
-  listItem: {
+  container: {
+    flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#262c2e',
     borderBottomColor: 'white',
     borderBottomWidth: 1,
+  },
+  alignItemsRtl: {
+    alignItems: 'flex-end',
+  },
+  alignItemsLtr: {
+    alignItems: 'flex-start',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   listTitle: {
     color: 'white',
@@ -112,24 +146,24 @@ const styles = StyleSheet.create({
   listSubtitle: {
     color: 'white',
     fontSize: 14,
-    paddingRight: '10%',
+    marginRight: '10%',
     paddingTop: '2%',
   },
   listSubtitleChecked: {
     color: 'grey',
     fontSize: 14,
-    paddingRight: '10%',
     paddingTop: '2%',
     fontStyle: 'italic',
     textDecorationLine: 'line-through',
     textDecorationStyle: 'solid',
+    marginRight: '10%',
   },
-  checkBoxContainer: {
+  checkBoxContainerLtr: {
     backgroundColor: '#262c2e',
     paddingRight: '5%',
   },
-  listItemContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  checkBoxContainerRtl: {
+    backgroundColor: '#262c2e',
+    paddingLeft: '5%',
   },
 });

@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import {ListItem} from '@rneui/themed';
 import {CategoryProps, ICategory} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
 
 export default function Category({
@@ -13,6 +14,8 @@ export default function Category({
 }: CategoryProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
+
+  const {dir} = useLang();
 
   const userToken = useAppSelector(state => state.user.token);
 
@@ -58,7 +61,8 @@ export default function Category({
       key={category?.id}
       content={
         <ListItem.Content>
-          <ListItem.Title style={styles.listTitle}>
+          <ListItem.Title
+            style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
             {category?.name}
           </ListItem.Title>
         </ListItem.Content>
@@ -73,7 +77,12 @@ export default function Category({
               containerStyle={styles.subListItem}
               onPress={() => clickCategoryHandler(sub, true)}>
               <ListItem.Content>
-                <ListItem.Title style={styles.subListTitle}>
+                <ListItem.Title
+                  style={
+                    dir === 'rtl'
+                      ? styles.subListTitleRtl
+                      : styles.subListTitleLtr
+                  }>
                   {sub?.name}
                 </ListItem.Title>
               </ListItem.Content>
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     padding: 20,
   },
-  listTitle: {
+  listTitleRtl: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
@@ -106,12 +115,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  subListTitle: {
+  listTitleLtr: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 15, // Add a border at the bottom
+    position: 'absolute',
+    left: 0,
+  },
+  subListTitleRtl: {
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
     position: 'absolute',
     marginRight: 55,
     right: 0,
+  },
+  subListTitleLtr: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    position: 'absolute',
+    marginLeft: 55,
+    left: 0,
   },
 });

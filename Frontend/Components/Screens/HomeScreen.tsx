@@ -7,6 +7,7 @@ export default function HomeScreen(): JSX.Element {
   const userFirstName = useAppSelector(state => state.user.userInfo.firstName);
   const userLastName = useAppSelector(state => state.user.userInfo.lastName);
   const tasksNumber = 3; // TODO: get tasks number from store
+
   return (
     <View style={styles.container}>
       <Text

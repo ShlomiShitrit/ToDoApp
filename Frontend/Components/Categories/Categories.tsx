@@ -4,6 +4,7 @@ import {ListItem, Icon} from '@rneui/themed';
 import Category from './Category';
 import {ICategory, CategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
 
 export default function Categories({
@@ -13,6 +14,8 @@ export default function Categories({
 }: CategoriesProps) {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
+
+  const {dir} = useLang();
 
   const userToken = useAppSelector(state => state.user.token);
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
@@ -40,15 +43,25 @@ export default function Categories({
         containerStyle={styles.listItem}
         content={
           <>
-            <ListItem.Content style={styles.content}>
+            <ListItem.Content
+              style={dir === 'rtl' ? styles.contentRtl : styles.contentLtr}>
+              {dir === 'ltr' ? (
+                <Icon
+                  style={styles.icon}
+                  name="layer-group"
+                  type="font-awesome-5"
+                />
+              ) : null}
               <ListItem.Title style={styles.listTitle}>
                 Categories
               </ListItem.Title>
-              <Icon
-                style={styles.icon}
-                name="layer-group"
-                type="font-awesome-5"
-              />
+              {dir === 'rtl' ? (
+                <Icon
+                  style={styles.icon}
+                  name="layer-group"
+                  type="font-awesome-5"
+                />
+              ) : null}
             </ListItem.Content>
           </>
         }
@@ -78,9 +91,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     padding: 30,
   },
-  content: {
+  contentRtl: {
     position: 'absolute',
     right: 0,
+    flexDirection: 'row',
+  },
+  contentLtr: {
+    position: 'absolute',
+    left: 0,
     flexDirection: 'row',
   },
   listTitle: {

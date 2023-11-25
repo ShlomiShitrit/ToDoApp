@@ -5,6 +5,7 @@ import Categories from '../Categories/Categories';
 import {DrawerContentProps} from '../../general/interfaces';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {userAction} from '../../store/userSlice';
+import useLang from '../../hooks/useLang';
 
 export default function DrawerContent({
   screenChanger,
@@ -12,8 +13,8 @@ export default function DrawerContent({
   setCurrentCategory,
   setIsSubCategory,
 }: DrawerContentProps) {
+  const {dir} = useLang();
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
-
   const dispatch = useAppDispatch();
 
   const navRoutes = [
@@ -38,19 +39,25 @@ export default function DrawerContent({
         color="white"
         type="AntDesign"
         onPress={closeDrawer}
-        style={styles.icon}
+        style={dir === 'ltr' ? styles.iconLtr : styles.iconRtl}
       />
       {navRoutes.map((route, index) => (
         <ListItem
           key={index}
           containerStyle={styles.listItem}
           onPress={route?.changeRoute}>
+          {dir === 'ltr' ? (
+            <Icon name={route?.icon} type={route?.iconType} />
+          ) : null}
           <ListItem.Content>
-            <ListItem.Title style={styles.listTitle}>
+            <ListItem.Title
+              style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
               {route?.name}
             </ListItem.Title>
           </ListItem.Content>
-          <Icon name={route?.icon} type={route?.iconType} />
+          {dir === 'rtl' ? (
+            <Icon name={route?.icon} type={route?.iconType} />
+          ) : null}
         </ListItem>
       ))}
       {isLoggedIn ? (
@@ -75,21 +82,32 @@ const styles = StyleSheet.create({
     paddingTop: 25,
     backgroundColor: '#262c2e',
   },
-  icon: {
+  iconRtl: {
     marginTop: 10,
     marginRight: 250,
+  },
+  iconLtr: {
+    marginTop: 20,
+    marginLeft: 250,
   },
   listItem: {
     backgroundColor: '#262c2e',
     borderBottomColor: 'white',
     borderBottomWidth: 1,
   },
-  listTitle: {
+  listTitleRtl: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
     position: 'absolute',
     right: 0,
+  },
+  listTitleLtr: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    position: 'absolute',
+    left: 0,
   },
   button: {
     marginTop: 30,

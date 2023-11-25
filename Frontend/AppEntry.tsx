@@ -1,5 +1,10 @@
-import React, {useRef, useState} from 'react';
-import {DrawerLayoutAndroid, StyleSheet} from 'react-native';
+import React, {useRef, useState, useEffect} from 'react';
+import {
+  DrawerLayoutAndroid,
+  StyleSheet,
+  NativeModules,
+  Platform,
+} from 'react-native';
 import {ThemeProvider, createTheme} from '@rneui/themed';
 import Header from './Components/UI/Header';
 import HomeScreen from './Components/Screens/HomeScreen';
@@ -8,8 +13,9 @@ import CategoriesScreen from './Components/Screens/CategoriesScreen';
 import DrawerContent from './Components/UI/DrawerContent';
 import {screens} from './general/types';
 import LoginScreen from './Components/Screens/LoginScreen';
-import {useAppSelector} from './hooks/store';
+import {useAppSelector, useAppDispatch} from './hooks/store';
 import {ICategory} from './general/interfaces';
+import {localeAction} from './store/localeSlice';
 import {EMPTY_CATEGORY} from './general/resources';
 
 export default function AppEntry() {
@@ -18,6 +24,25 @@ export default function AppEntry() {
     useState<ICategory>(EMPTY_CATEGORY);
   const [isSubCategory, setIsSubCategory] = useState<boolean>(false);
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const deviceLanguage =
+      Platform.OS === 'android'
+        ? NativeModules.I18nManager.localeIdentifier
+        : null;
+    console.log(deviceLanguage);
+
+    if (deviceLanguage !== null) {
+      if (deviceLanguage === 'iw_IL') {
+        dispatch(localeAction.setLocaleToHe());
+      } else if (deviceLanguage === 'en_US') {
+        dispatch(localeAction.setLocaleToEn());
+      }
+    }
+  }, [dispatch]);
+
+  
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
 
   const drawer = useRef<DrawerLayoutAndroid>(null);
