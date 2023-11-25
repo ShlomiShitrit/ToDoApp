@@ -125,5 +125,53 @@ namespace Backend.Controllers
 
             return Ok("Successfully created");
         }
+
+        [HttpPut("{taskId}")]
+        public IActionResult UpdateTask(int taskId, [FromBody] TaskDto updatedTask)
+        {
+            if (updatedTask == null)
+                return BadRequest(ModelState);
+            if (taskId != updatedTask.Id)
+                return BadRequest(ModelState);
+            if (!_taskRepository.TaskExists(taskId))
+                return NotFound("Task Doesn't exist");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var taskMap = _mapper.Map<TaskModel>(updatedTask);
+
+
+            if (!_taskRepository.UpdateTask(taskMap))
+            {
+                ModelState.AddModelError("Task", "Something went wrong updating task");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+
+        }
+
+        [HttpDelete("{taskId}")]
+        public IActionResult DeleteTask(int taskId)
+        {
+            if (_taskRepository.TaskExists(taskId))
+                return NotFound();
+
+            var taskToDelete = _taskRepository.GetTaskById(taskId);
+
+            if (taskToDelete == null)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_taskRepository.DeleteTask(taskToDelete))
+            {
+                ModelState.AddModelError("Task", "Something went wrong deleting task");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
     }
 }

@@ -40,7 +40,11 @@ export default function CategoriesScreen({
         {`Category: ${category?.name}`}
       </Text>
       <ScrollView style={styles.scrollView}>
-        <Tasks tasks={tasks} />
+        <Tasks
+          tasks={tasks}
+          category={category}
+          isSubCategory={isSubCategory}
+        />
       </ScrollView>
     </View>
   );
