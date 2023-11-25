@@ -4,7 +4,7 @@ export interface HeaderProps {
   openDrawer: () => void;
 }
 
-export interface TasksProps {
+export interface TasksProps extends CategoryScreenProps {
   tasks: ITask[];
 }
 
@@ -28,6 +28,7 @@ export interface ITask {
   id: number;
   title: string;
   subTitle: string;
+  checked: boolean;
 }
 
 export interface IUser {

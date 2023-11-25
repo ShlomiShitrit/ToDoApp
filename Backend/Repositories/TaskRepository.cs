@@ -17,7 +17,8 @@ namespace Backend.Repositories
 
         public bool DeleteTask(TaskModel task)
         {
-            throw new NotImplementedException();
+            _context.Remove(task);
+            return Save();
         }
 
         public TaskModel? GetTaskById(int id)
@@ -44,7 +45,8 @@ namespace Backend.Repositories
 
         public bool UpdateTask(TaskModel task)
         {
-            throw new NotImplementedException();
+            _context.Update(task);
+            return Save();
         }
     }
 }
