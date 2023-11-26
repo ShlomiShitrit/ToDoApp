@@ -30,9 +30,7 @@ export interface DrawerCategoriesProps {
   isSubCategory: boolean;
 }
 
-export interface CategoriesProps extends DrawerCategoriesProps {
-  onUpdate: () => void;
-}
+export interface CategoriesProps extends DrawerCategoriesProps {}
 
 export interface DrawerContentProps extends DrawerCategoriesProps {
   closeDrawer: () => void;
