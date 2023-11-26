@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import {ListItem, Icon, Button} from '@rneui/themed';
 import Categories from '../Categories/Categories';
 import {DrawerContentProps} from '../../general/interfaces';
@@ -34,52 +34,59 @@ export default function DrawerContent({
   ];
 
   return (
-    <View style={styles.container}>
-      <Icon
-        name="close"
-        color="white"
-        type="AntDesign"
-        onPress={closeDrawer}
-        style={dir === 'ltr' ? styles.iconLtr : styles.iconRtl}
-      />
-      {navRoutes.map((route, index) => (
-        <ListItem
-          key={index}
-          containerStyle={styles.listItem}
-          onPress={route?.changeRoute}>
-          {dir === 'ltr' ? (
-            <Icon name={route?.icon} type={route?.iconType} />
-          ) : null}
-          <ListItem.Content>
-            <ListItem.Title
-              style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
-              {route?.name}
-            </ListItem.Title>
-          </ListItem.Content>
-          {dir === 'rtl' ? (
-            <Icon name={route?.icon} type={route?.iconType} />
-          ) : null}
-        </ListItem>
-      ))}
-      {isLoggedIn ? (
-        <Categories
-          setCurrentCategory={setCurrentCategory}
-          setIsSubCategory={setIsSubCategory}
-          screenChanger={screenChanger}
-          isSubCategory={isSubCategory}
+    <ScrollView style={styles.container}>
+      <View style={styles.secondaeyContainer}>
+        <Icon
+          name="close"
+          color="white"
+          type="AntDesign"
+          onPress={closeDrawer}
+          style={dir === 'ltr' ? styles.iconLtr : styles.iconRtl}
         />
-      ) : null}
-      <Button
-        title="Logout"
-        containerStyle={styles.button}
-        onPress={() => dispatch(userAction.logout())}
-      />
-    </View>
+        {navRoutes.map((route, index) => (
+          <ListItem
+            key={index}
+            containerStyle={styles.listItem}
+            onPress={route?.changeRoute}>
+            {dir === 'ltr' ? (
+              <Icon name={route?.icon} type={route?.iconType} />
+            ) : null}
+            <ListItem.Content>
+              <ListItem.Title
+                style={
+                  dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr
+                }>
+                {route?.name}
+              </ListItem.Title>
+            </ListItem.Content>
+            {dir === 'rtl' ? (
+              <Icon name={route?.icon} type={route?.iconType} />
+            ) : null}
+          </ListItem>
+        ))}
+        {isLoggedIn ? (
+          <Categories
+            setCurrentCategory={setCurrentCategory}
+            setIsSubCategory={setIsSubCategory}
+            screenChanger={screenChanger}
+            isSubCategory={isSubCategory}
+          />
+        ) : null}
+        <Button
+          title="Logout"
+          containerStyle={styles.button}
+          onPress={() => dispatch(userAction.logout())}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#262c2e',
+  },
+  secondaeyContainer: {
     flex: 1,
     paddingTop: 25,
     backgroundColor: '#262c2e',
@@ -116,5 +123,6 @@ const styles = StyleSheet.create({
     width: '30%',
     borderRadius: 20,
     alignSelf: 'center',
+    marginBottom: 20,
   },
 });
