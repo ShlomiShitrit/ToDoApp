@@ -12,16 +12,25 @@ export interface GeneralCategoryProp {
   category: ICategory;
 }
 
-export interface CategoryProps extends CategoriesProps, GeneralCategoryProp {}
+export interface CategoryProps
+  extends DrawerCategoriesProps,
+    GeneralCategoryProp {}
 
 export interface CategoryScreenProps extends GeneralCategoryProp {
   isSubCategory: boolean;
 }
 
-export interface CategoriesProps {
+export interface DrawerCategoriesProps {
   setCurrentCategory: (category: ICategory) => void;
   setIsSubCategory: (isSubCategory: boolean) => void;
   screenChanger: (screenName: screens, isSub?: boolean) => void;
+  isSubCategory: boolean;
+}
+
+export interface CategoriesProps extends DrawerCategoriesProps {}
+
+export interface DrawerContentProps extends DrawerCategoriesProps {
+  closeDrawer: () => void;
 }
 
 export interface ITask {
@@ -54,16 +63,16 @@ export interface ICategory extends GeneralCategory {
   subCategories?: ISubCategory[];
 }
 
-export interface DrawerContentProps {
-  screenChanger: (screenName: screens) => void;
-  closeDrawer: () => void;
-  setCurrentCategory: (category: ICategory) => void;
-  setIsSubCategory: (isSubCategory: boolean) => void;
-}
-
-export interface SignupDialogProps {
+export interface GeneralDialog {
   open: boolean;
   onBackPress: () => void;
+}
+
+export interface SignupDialogProps extends GeneralDialog {}
+
+export interface AddCategoryDialogProps extends GeneralDialog {
+  isSubCategory: boolean;
+  category?: ICategory;
 }
 
 export interface UserSliceState {

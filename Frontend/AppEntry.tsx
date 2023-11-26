@@ -80,6 +80,28 @@ export default function AppEntry() {
     }
   };
 
+  const renderScreen = () => {
+    if (!isLoggedIn) {
+      return <LoginScreen />;
+    }
+
+    switch (currentScreen) {
+      case 'Home':
+        return <HomeScreen />;
+      case 'User':
+        return <UserScreen />;
+      case 'Categories':
+        return (
+          <CategoriesScreen
+            category={currentCategory}
+            isSubCategory={isSubCategory}
+          />
+        );
+      default:
+        return <HomeScreen />;
+    }
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <DrawerLayoutAndroid
@@ -95,18 +117,11 @@ export default function AppEntry() {
               setCurrentCategory(category)
             }
             setIsSubCategory={(isSub: boolean) => setIsSubCategory(isSub)}
+            isSubCategory={isSubCategory}
           />
         )}>
         <Header openDrawer={() => drawer.current?.openDrawer()} />
-        {isLoggedIn ? null : <LoginScreen />}
-        {currentScreen === 'Home' && isLoggedIn ? <HomeScreen /> : null}
-        {currentScreen === 'User' && isLoggedIn ? <UserScreen /> : null}
-        {currentScreen === 'Categories' && isLoggedIn ? (
-          <CategoriesScreen
-            category={currentCategory}
-            isSubCategory={isSubCategory}
-          />
-        ) : null}
+        {renderScreen()}
       </DrawerLayoutAndroid>
     </ThemeProvider>
   );

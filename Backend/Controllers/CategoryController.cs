@@ -53,8 +53,15 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult CreateCategory([FromQuery] int userId, [FromBody] CategoryDto categoryCreate)
+        public IActionResult CreateCategory([FromBody] CategoryDto categoryCreate)
         {
+            var currentUser = GetCurrentUser();
+
+            if (currentUser == null)
+                return NotFound("No user is logged in");
+
+            var currentUserId = currentUser.Id;
+
             if (categoryCreate == null)
                 return BadRequest(ModelState);
 
@@ -71,17 +78,18 @@ namespace Backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isUserExists = _userRepository.UserExists(userId);
+            var isUserExists = _userRepository.UserExists(currentUserId);
             if (!isUserExists)
                 return NotFound();
 
             var categoryMap = _mapper.Map<Category>(categoryCreate);
-            var user = _userRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(currentUserId);
 
             if (user == null)
                 return NotFound();
 
             categoryMap.User = user;
+            categoryMap.UserId = currentUserId;
 
             if (!_categoryRepository.CreateCategory(categoryMap))
             {

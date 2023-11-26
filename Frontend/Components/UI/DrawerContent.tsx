@@ -12,6 +12,7 @@ export default function DrawerContent({
   closeDrawer,
   setCurrentCategory,
   setIsSubCategory,
+  isSubCategory,
 }: DrawerContentProps) {
   const {dir} = useLang();
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
@@ -65,6 +66,7 @@ export default function DrawerContent({
           setCurrentCategory={setCurrentCategory}
           setIsSubCategory={setIsSubCategory}
           screenChanger={screenChanger}
+          isSubCategory={isSubCategory}
         />
       ) : null}
       <Button

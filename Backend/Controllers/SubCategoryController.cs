@@ -47,8 +47,9 @@ namespace Backend.Controllers
 
         }
 
-        [HttpPost]
-        public IActionResult CreateSubCategory([FromQuery] int categoryId, [FromBody] SubCategoryDto subCategoryCreate)
+        [HttpPost("{categoryId}")]
+        [Authorize]
+        public IActionResult CreateSubCategory(int categoryId, [FromBody] SubCategoryDto subCategoryCreate)
         {
             if (subCategoryCreate == null)
                 return BadRequest(ModelState);
@@ -77,6 +78,7 @@ namespace Backend.Controllers
                 return NotFound();
 
             subCategoryMap.Category = category;
+            subCategoryMap.CategoryId = categoryId;
 
 
             if (!_subCategoryRepository.CreateSubCategory(subCategoryMap))
