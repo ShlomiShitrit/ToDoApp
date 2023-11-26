@@ -71,13 +71,17 @@ export interface GeneralDialog {
   onBackPress: () => void;
 }
 
+export interface AdvancedDialogProps extends GeneralDialog {
+  isSubCategory: boolean;
+  onUpdate: () => void;
+  category?: ICategory;
+}
+
 export interface SignupDialogProps extends GeneralDialog {}
 
-export interface AddCategoryDialogProps extends GeneralDialog {
-  isSubCategory: boolean;
-  category?: ICategory;
-  onUpdate: () => void;
-}
+export interface AddTaskDialogProps extends AdvancedDialogProps {}
+
+export interface AddCategoryDialogProps extends AdvancedDialogProps {}
 
 export interface UserSliceState {
   userInfo: IUser;
