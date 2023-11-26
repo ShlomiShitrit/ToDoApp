@@ -14,7 +14,10 @@ export interface GeneralCategoryProp {
 
 export interface CategoryProps
   extends DrawerCategoriesProps,
-    GeneralCategoryProp {}
+    GeneralCategoryProp {
+  onUpdate: () => void;
+  isUpdate: boolean;
+}
 
 export interface CategoryScreenProps extends GeneralCategoryProp {
   isSubCategory: boolean;
@@ -27,7 +30,9 @@ export interface DrawerCategoriesProps {
   isSubCategory: boolean;
 }
 
-export interface CategoriesProps extends DrawerCategoriesProps {}
+export interface CategoriesProps extends DrawerCategoriesProps {
+  onUpdate: () => void;
+}
 
 export interface DrawerContentProps extends DrawerCategoriesProps {
   closeDrawer: () => void;
@@ -73,6 +78,7 @@ export interface SignupDialogProps extends GeneralDialog {}
 export interface AddCategoryDialogProps extends GeneralDialog {
   isSubCategory: boolean;
   category?: ICategory;
+  onUpdate: () => void;
 }
 
 export interface UserSliceState {

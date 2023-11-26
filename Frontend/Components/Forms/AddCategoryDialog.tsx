@@ -9,6 +9,7 @@ export default function AddCategory({
   onBackPress,
   isSubCategory,
   category,
+  onUpdate,
 }: AddCategoryDialogProps): JSX.Element {
   const [categoryName, setCategoryName] = useState<string>('');
   const userToken = useAppSelector(state => state.user.token);
@@ -31,11 +32,11 @@ export default function AddCategory({
         },
         body: JSON.stringify(categoryToPost),
       });
-      console.log(response.ok);
 
       if (response.ok) {
         console.log(`${titleCat} added successfully`);
         setCategoryName('');
+        onUpdate();
         onBackPress();
       } else {
         const errorResponse = await response.json();

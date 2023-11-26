@@ -13,6 +13,8 @@ export default function Category({
   setIsSubCategory,
   screenChanger,
   isSubCategory,
+  onUpdate,
+  isUpdate,
 }: CategoryProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
@@ -40,7 +42,7 @@ export default function Category({
       }
     };
     fetchSubCategories();
-  }, [category, userToken]);
+  }, [category, userToken, isUpdate]);
 
   const clickCategoryHandler = (
     clickedCategory: ICategory,
@@ -119,6 +121,7 @@ export default function Category({
         onBackPress={() => setOpen(false)}
         isSubCategory={isSubCategory}
         category={category}
+        onUpdate={onUpdate}
       />
     </>
   );

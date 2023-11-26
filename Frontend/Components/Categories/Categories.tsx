@@ -17,6 +17,7 @@ export default function Categories({
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const {dir} = useLang();
 
@@ -38,7 +39,7 @@ export default function Categories({
       }
     };
     fetchCategories();
-  }, [userToken]);
+  }, [userToken, isUpdate]);
 
   return (
     <>
@@ -80,6 +81,8 @@ export default function Categories({
                 setIsSubCategory={setIsSubCategory}
                 screenChanger={screenChanger}
                 isSubCategory={true}
+                onUpdate={() => setIsUpdate(!isUpdate)}
+                isUpdate={isUpdate}
               />
             ))
           : null}
@@ -104,6 +107,7 @@ export default function Categories({
         open={open}
         onBackPress={() => setOpen(false)}
         isSubCategory={isSubCategory}
+        onUpdate={() => setIsUpdate(!isUpdate)}
       />
     </>
   );
