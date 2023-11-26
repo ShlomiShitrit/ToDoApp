@@ -39,7 +39,7 @@ export default function CategoriesScreen({
   return (
     <View style={styles.container}>
       <Text h2 h2Style={styles.text}>
-        {`Category: ${category?.name}`}
+        {category?.name}
       </Text>
       <ScrollView style={styles.scrollView}>
         {tasks.length > 0 ? (
