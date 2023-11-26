@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
-import {Text} from '@rneui/themed';
+import {Text, ListItem} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
@@ -39,14 +39,24 @@ export default function CategoriesScreen({
   return (
     <View style={styles.container}>
       <Text h2 h2Style={styles.text}>
-        {`Category: ${category?.name}`}
+        {category?.name}
       </Text>
       <ScrollView style={styles.scrollView}>
-        <Tasks
-          tasks={tasks}
-          category={category}
-          isSubCategory={isSubCategory}
-        />
+        {tasks.length > 0 ? (
+          <Tasks
+            tasks={tasks}
+            category={category}
+            isSubCategory={isSubCategory}
+          />
+        ) : (
+          <ListItem containerStyle={styles.listItemContainer}>
+            <ListItem.Content>
+              <ListItem.Title>
+                <Text style={styles.listTitle}>No tasks yet</Text>
+              </ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        )}
       </ScrollView>
     </View>
   );
@@ -60,6 +70,13 @@ const styles = StyleSheet.create({
     paddingTop: '10%',
     paddingHorizontal: '10%',
   },
+  listItemContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#262c2e',
+    borderBottomColor: 'white',
+    borderBottomWidth: 1,
+  },
   list: {
     flexGrow: 1,
     paddingTop: '10%',
@@ -71,5 +88,10 @@ const styles = StyleSheet.create({
   scrollView: {
     marginTop: '10%',
     marginBottom: '20%',
+  },
+  listTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
