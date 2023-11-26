@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
-import {ListItem} from '@rneui/themed';
+import {ListItem, Icon} from '@rneui/themed';
 import {CategoryProps, ICategory} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
+import AddCategoryDialog from '../Forms/AddCategoryDialog';
 import {API_HOST} from '@env';
 
 export default function Category({
@@ -11,9 +12,11 @@ export default function Category({
   setCurrentCategory,
   setIsSubCategory,
   screenChanger,
+  isSubCategory,
 }: CategoryProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
 
   const {dir} = useLang();
 
@@ -56,40 +59,65 @@ export default function Category({
   };
 
   return (
-    <ListItem.Accordion
-      containerStyle={styles.listItem}
-      key={category?.id}
-      content={
-        <ListItem.Content>
-          <ListItem.Title
-            style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
-            {category?.name}
-          </ListItem.Title>
-        </ListItem.Content>
-      }
-      isExpanded={expanded}
-      onPress={() => clickCategoryHandler(category)}
-      noIcon={true}>
-      {subCategories
-        ? subCategories?.map(sub => (
-            <ListItem
-              key={sub?.id}
-              containerStyle={styles.subListItem}
-              onPress={() => clickCategoryHandler(sub, true)}>
-              <ListItem.Content>
-                <ListItem.Title
-                  style={
-                    dir === 'rtl'
-                      ? styles.subListTitleRtl
-                      : styles.subListTitleLtr
-                  }>
-                  {sub?.name}
-                </ListItem.Title>
-              </ListItem.Content>
-            </ListItem>
-          ))
-        : null}
-    </ListItem.Accordion>
+    <>
+      <ListItem.Accordion
+        containerStyle={styles.listItem}
+        key={category?.id}
+        content={
+          <ListItem.Content>
+            <ListItem.Title
+              style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
+              {category?.name}
+            </ListItem.Title>
+          </ListItem.Content>
+        }
+        isExpanded={expanded}
+        onPress={() => clickCategoryHandler(category)}
+        noIcon={true}>
+        {subCategories
+          ? subCategories?.map(sub => (
+              <ListItem
+                key={sub?.id}
+                containerStyle={styles.subListItem}
+                onPress={() => clickCategoryHandler(sub, true)}>
+                <ListItem.Content>
+                  <ListItem.Title
+                    style={
+                      dir === 'rtl'
+                        ? styles.subListTitleRtl
+                        : styles.subListTitleLtr
+                    }>
+                    {sub?.name}
+                  </ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
+            ))
+          : null}
+        <ListItem containerStyle={styles.subListItem}>
+          <ListItem.Content>
+            {dir === 'ltr' ? (
+              <Icon style={styles.icon} name="plus" type="ant-design" />
+            ) : null}
+            <ListItem.Title
+              style={
+                dir === 'rtl' ? styles.subListTitleRtl : styles.subListTitleLtr
+              }
+              onPress={() => setOpen(true)}>
+              Add subcategory
+            </ListItem.Title>
+            {dir === 'rtl' ? (
+              <Icon style={styles.icon} name="plus" type="ant-design" />
+            ) : null}
+          </ListItem.Content>
+        </ListItem>
+      </ListItem.Accordion>
+      <AddCategoryDialog
+        open={open}
+        onBackPress={() => setOpen(false)}
+        isSubCategory={isSubCategory}
+        category={category}
+      />
+    </>
   );
 }
 
@@ -97,7 +125,7 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: '#262c2e',
     borderBottomColor: 'white',
-    borderTopWidth: 0, // Remove top border
+    borderTopWidth: 0,
     borderBottomWidth: 1,
     padding: 25,
   },
@@ -111,7 +139,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginRight: 15, // Add a border at the bottom
+    marginRight: 15,
     position: 'absolute',
     right: 0,
   },
@@ -119,7 +147,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 15, // Add a border at the bottom
+    marginLeft: 15,
     position: 'absolute',
     left: 0,
   },
@@ -138,5 +166,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginLeft: 55,
     left: 0,
+  },
+  icon: {
+    marginLeft: 15,
+    marginRight: 15,
   },
 });

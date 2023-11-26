@@ -6,14 +6,17 @@ import {ICategory, CategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
+import AddCategoryDialog from '../Forms/AddCategoryDialog';
 
 export default function Categories({
   setCurrentCategory,
   setIsSubCategory,
   screenChanger,
+  isSubCategory,
 }: CategoriesProps) {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const {dir} = useLang();
 
@@ -76,10 +79,32 @@ export default function Categories({
                 setCurrentCategory={setCurrentCategory}
                 setIsSubCategory={setIsSubCategory}
                 screenChanger={screenChanger}
+                isSubCategory={true}
               />
             ))
           : null}
+        <ListItem containerStyle={styles.listItem}>
+          <ListItem.Content
+            style={dir === 'rtl' ? styles.contentRtl : styles.contentLtr}>
+            {dir === 'ltr' ? (
+              <Icon style={styles.icon} name="plus" type="ant-design" />
+            ) : null}
+            <ListItem.Title
+              style={styles.listTitle}
+              onPress={() => setOpen(true)}>
+              Add Category
+            </ListItem.Title>
+            {dir === 'rtl' ? (
+              <Icon style={styles.icon} name="plus" type="ant-design" />
+            ) : null}
+          </ListItem.Content>
+        </ListItem>
       </ListItem.Accordion>
+      <AddCategoryDialog
+        open={open}
+        onBackPress={() => setOpen(false)}
+        isSubCategory={isSubCategory}
+      />
     </>
   );
 }
