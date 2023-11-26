@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {ListItem, Icon} from '@rneui/themed';
 import {CategoryProps, ICategory} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
@@ -93,21 +93,24 @@ export default function Category({
               </ListItem>
             ))
           : null}
-        <ListItem containerStyle={styles.subListItem}>
+        <ListItem containerStyle={styles.addSubListItem}>
           <ListItem.Content>
-            {dir === 'ltr' ? (
-              <Icon style={styles.icon} name="plus" type="ant-design" />
-            ) : null}
-            <ListItem.Title
+            <View
               style={
-                dir === 'rtl' ? styles.subListTitleRtl : styles.subListTitleLtr
-              }
-              onPress={() => setOpen(true)}>
-              Add subcategory
-            </ListItem.Title>
-            {dir === 'rtl' ? (
-              <Icon style={styles.icon} name="plus" type="ant-design" />
-            ) : null}
+                dir === 'rtl' ? styles.rowContainerRtl : styles.rowContainerLtr
+              }>
+              {dir === 'ltr' ? <Icon name="plus" type="ant-design" /> : null}
+              <ListItem.Title
+                style={
+                  dir === 'rtl'
+                    ? styles.addSubListTitleRtl
+                    : styles.addSubListTitleLtr
+                }
+                onPress={() => setOpen(true)}>
+                Add subcategory
+              </ListItem.Title>
+              {dir === 'rtl' ? <Icon name="plus" type="ant-design" /> : null}
+            </View>
           </ListItem.Content>
         </ListItem>
       </ListItem.Accordion>
@@ -167,8 +170,31 @@ const styles = StyleSheet.create({
     marginLeft: 55,
     left: 0,
   },
-  icon: {
-    marginLeft: 15,
-    marginRight: 15,
+  addSubListItem: {
+    backgroundColor: '#262c2e',
+    borderBottomColor: 'white',
+    borderBottomWidth: 1,
+    padding: 20,
+  },
+  addSubListTitleRtl: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  addSubListTitleLtr: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  rowContainerRtl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 0,
+    marginRight: 20,
+  },
+  rowContainerLtr: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
