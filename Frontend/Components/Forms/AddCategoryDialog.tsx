@@ -32,7 +32,6 @@ export default function AddCategory({
         },
         body: JSON.stringify(categoryToPost),
       });
-      console.log(response.ok);
 
       if (response.ok) {
         console.log(`${titleCat} added successfully`);
