@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
-import {Text, ListItem, Button} from '@rneui/themed';
+import {Text, ListItem, Icon} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
@@ -31,6 +31,7 @@ export default function CategoriesScreen({
           },
         });
         const data = await response.json();
+        data.reverse();
         setTasks(data);
       } catch (error) {
         console.log(error);
@@ -44,6 +45,12 @@ export default function CategoriesScreen({
       <Text h2 h2Style={styles.text}>
         {category?.name}
       </Text>
+      <Icon
+        style={styles.icon}
+        onPress={() => setOpen(true)}
+        name="plus"
+        type="ant-design"
+      />
       <ScrollView style={styles.scrollView}>
         {tasks.length > 0 ? (
           <Tasks
@@ -62,11 +69,6 @@ export default function CategoriesScreen({
             </ListItem>
           </>
         )}
-        <Button
-          containerStyle={styles.button}
-          title="Add task"
-          onPress={() => setOpen(true)}
-        />
         <AddTaskDialog
           open={open}
           onBackPress={() => setOpen(false)}
@@ -111,11 +113,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  button: {
-    marginTop: 30,
-    width: '30%',
-    borderRadius: 20,
-    alignSelf: 'center',
-    marginBottom: 20,
+  icon: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    backgroundColor: '#262c2e',
   },
 });
