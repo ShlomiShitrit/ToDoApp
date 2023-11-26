@@ -23,13 +23,13 @@ export default function DrawerContent({
       name: 'Home',
       icon: 'home',
       iconType: 'feather',
-      changeRoute: () => screenChanger('Home'),
+      changeRoute: () => screenChanger('Home', true),
     },
     {
       name: 'User',
       icon: 'user',
       iconType: 'feather',
-      changeRoute: () => screenChanger('User'),
+      changeRoute: () => screenChanger('User', true),
     },
   ];
 
