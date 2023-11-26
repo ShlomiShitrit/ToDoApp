@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
-using Backend.Data;
 using Backend.Dto;
 using Backend.Interfaces;
-using Backend.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
+
 
 namespace Backend.Controllers
 {
@@ -48,8 +50,11 @@ namespace Backend.Controllers
         }
 
         [HttpPost("category")]
+        [Authorize]
         public IActionResult CreateTaskOfCategory([FromQuery] int categoryId, [FromBody] TaskDto taskCreate)
         {
+
+
             if (taskCreate == null)
                 return BadRequest(ModelState);
 
@@ -87,6 +92,7 @@ namespace Backend.Controllers
             return Ok("Successfully created");
         }
         [HttpPost("subcategory")]
+        [Authorize]
         public IActionResult CreateTaskOfSubCategory([FromQuery] int subCategoryId, [FromBody] TaskDto taskCreate)
         {
             if (taskCreate == null)
@@ -172,6 +178,21 @@ namespace Backend.Controllers
             }
 
             return NoContent();
+        }
+        internal User GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;
+
+            var userClaims = identity?.Claims;
+
+            return new User
+            {
+                Id = Convert.ToInt32(userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value),
+                Email = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Email)?.Value ?? "is null",
+                FirstName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.GivenName)?.Value ?? "is null",
+                LastName = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Surname)?.Value ?? "is null",
+                Role = userClaims?.FirstOrDefault(u => u.Type == ClaimTypes.Role)?.Value ?? "is null",
+            };
         }
     }
 }

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {StyleSheet} from 'react-native';
 import {Dialog, Input} from '@rneui/themed';
 import {AddCategoryDialogProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
@@ -52,7 +53,9 @@ export default function AddCategory({
     <Dialog isVisible={open} onBackdropPress={onBackPress}>
       <Dialog.Title title={`Add ${titleCat}`} />
       <Input
-        placeholder={`Enter ${titleCat} name`}
+        labelStyle={styles.label}
+        label={`${titleCat} name`}
+        placeholder={isSubCategory ? 'Groceries' : 'Home'}
         onChangeText={setCategoryName}
         value={categoryName}
       />
@@ -63,3 +66,7 @@ export default function AddCategory({
     </Dialog>
   );
 }
+
+const styles = StyleSheet.create({
+  label: {color: 'white'},
+});

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
-import {Text, ListItem} from '@rneui/themed';
+import {Text, ListItem, Button} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
+import AddTaskDialog from '../Forms/AddTaskDialog';
 import {API_HOST} from '@env';
 
 const windowHeight = Dimensions.get('window').height;
@@ -13,6 +14,8 @@ export default function CategoriesScreen({
   isSubCategory,
 }: CategoryScreenProps): JSX.Element {
   const [tasks, setTasks] = useState<ITask[]>([]);
+  const [open, setOpen] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   const userToken = useAppSelector(state => state.user.token);
 
@@ -34,7 +37,7 @@ export default function CategoriesScreen({
       }
     };
     fetchTasks();
-  }, [userToken, category, isSubCategory]);
+  }, [userToken, category, isSubCategory, isUpdate]);
 
   return (
     <View style={styles.container}>
@@ -49,14 +52,28 @@ export default function CategoriesScreen({
             isSubCategory={isSubCategory}
           />
         ) : (
-          <ListItem containerStyle={styles.listItemContainer}>
-            <ListItem.Content>
-              <ListItem.Title>
-                <Text style={styles.listTitle}>No tasks yet</Text>
-              </ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
+          <>
+            <ListItem containerStyle={styles.listItemContainer}>
+              <ListItem.Content>
+                <ListItem.Title>
+                  <Text style={styles.listTitle}>No tasks yet</Text>
+                </ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          </>
         )}
+        <Button
+          containerStyle={styles.button}
+          title="Add task"
+          onPress={() => setOpen(true)}
+        />
+        <AddTaskDialog
+          open={open}
+          onBackPress={() => setOpen(false)}
+          onUpdate={() => setIsUpdate(!isUpdate)}
+          category={category}
+          isSubCategory={isSubCategory}
+        />
       </ScrollView>
     </View>
   );
@@ -93,5 +110,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  button: {
+    marginTop: 30,
+    width: '30%',
+    borderRadius: 20,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
