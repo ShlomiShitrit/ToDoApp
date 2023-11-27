@@ -49,7 +49,52 @@ namespace Backend.Controllers
             return Ok(category);
 
         }
+        [HttpGet("{categoryId}/subcategories")]
+        [Authorize]
+        public IActionResult GetSubCategories(int categoryId)
+        {
+            if (!_categoryRepository.CategoryExists(categoryId))
+                return NotFound();
 
+            var currentUser = GetCurrentUser();
+
+            var categories = _mapper.Map<List<CategoryDto>>(_userRepository.GetCategories(currentUser.Id));
+
+            var category = categories.Where(c => c.Id == categoryId).FirstOrDefault();
+
+            if (category == null)
+                return NotFound("The current user don't have a category with this id");
+
+            var newCategoryId = category.Id;
+            var subCategories = _mapper.Map<List<SubCategoryDto>>(_categoryRepository.GetSubCategories(newCategoryId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(subCategories);
+        }
+
+        [HttpGet("{categoryId}/tasks")]
+        [Authorize]
+        public IActionResult GetTasks(int categoryId)
+        {
+            if (!_categoryRepository.CategoryExists(categoryId))
+                return NotFound();
+
+            var currentUser = GetCurrentUser();
+
+            var authCategory = _userRepository.GetCategories(currentUser.Id).Where(c => c.Id == categoryId).FirstOrDefault();
+
+            if (authCategory == null)
+                return NotFound("This user don't have a category with this id");
+
+            var tasks = _mapper.Map<List<TaskDto>>(_categoryRepository.GetTasks(authCategory.Id));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tasks);
+        }
 
         [HttpPost]
         [Authorize]
@@ -100,53 +145,29 @@ namespace Backend.Controllers
             return Ok("Successfully created");
         }
 
-        [HttpGet("{categoryId}/subcategories")]
+        [HttpDelete("{categoryId}")]
         [Authorize]
-        public IActionResult GetSubCategories(int categoryId)
+        public IActionResult DeleteCategory(int categoryId)
         {
-            if (!_categoryRepository.CategoryExists(categoryId))
+            if (!categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
-            var currentUser = GetCurrentUser();
+            var categoryToDelete = _categoryRepository.GetCategoryById(categoryId);
 
-            var categories = _mapper.Map<List<CategoryDto>>(_userRepository.GetCategories(currentUser.Id));
-
-            var category = categories.Where(c => c.Id == categoryId).FirstOrDefault();
-
-            if (category == null)
-                return NotFound("The current user don't have a category with this id");
-
-            var newCategoryId = category.Id;
-            var subCategories = _mapper.Map<List<SubCategoryDto>>(_categoryRepository.GetSubCategories(newCategoryId));
+            if (categoryToDelete == null)
+                return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(subCategories);
+            if (!_categoryRepository.DeleteCategory(categoryToDelete))
+            {
+                ModelState.AddModelError("Category", "Something went wrong deleting category");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
-
-        [HttpGet("{categoryId}/tasks")]
-        [Authorize]
-        public IActionResult GetTasks(int categoryId)
-        {
-            if (!_categoryRepository.CategoryExists(categoryId))
-                return NotFound();
-
-            var currentUser = GetCurrentUser();
-
-            var authCategory = _userRepository.GetCategories(currentUser.Id).Where(c => c.Id == categoryId).FirstOrDefault();
-
-            if (authCategory == null)
-                return NotFound("This user don't have a category with this id");
-
-            var tasks = _mapper.Map<List<TaskDto>>(_categoryRepository.GetTasks(authCategory.Id));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tasks);
-        }
-
         internal User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;

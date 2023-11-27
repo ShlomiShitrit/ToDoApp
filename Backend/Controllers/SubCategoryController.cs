@@ -124,6 +124,30 @@ namespace Backend.Controllers
             return Ok(tasks);
         }
 
+        [HttpDelete("{subCategoryId}")]
+        [Authorize]
+        public IActionResult DeleteSubCategory(int subCategoryId)
+        {
+            if (!subCategoryRepository.SubCategoryExists(subCategoryId))
+                return NotFound();
+
+            var subCategoryToDelete = _subCategoryRepository.GetSubCategoryById(subCategoryId);
+
+            if (subCategoryToDelete == null)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_subCategoryRepository.DeleteSubCategory(subCategoryToDelete))
+            {
+                ModelState.AddModelError("SubCategory", "Something went wrong deleting subcategory");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
         internal User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;
