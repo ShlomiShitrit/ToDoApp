@@ -1,19 +1,34 @@
-import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, ScrollView} from 'react-native';
+import {ICategory} from '../../general/interfaces';
+import EditCategories from '../Categories/EditCategories';
 
 export default function UserScreen(): JSX.Element {
+  const [currentCategory, setCurrentCategory] = useState<ICategory | null>(
+    null,
+  );
+  const [isSubCategory, setIsSubCategory] = useState<boolean>(false);
+  console.log(currentCategory);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>User Page</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <EditCategories
+        isSubCategory={isSubCategory}
+        setIsSubCategory={(value: boolean) => setIsSubCategory(value)}
+        setCurrentCategory={(category: ICategory) =>
+          setCurrentCategory(category)
+        }
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
+    width: '80%',
+    marginHorizontal: '10%',
+    position: 'absolute',
+    top: '15%',
   },
   text: {
     color: 'white',

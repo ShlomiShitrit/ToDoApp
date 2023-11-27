@@ -1,4 +1,4 @@
-import {screens, categoryIcon} from './types';
+import {screens, categoryIcon, direction, language} from './types';
 
 export interface HeaderProps {
   openDrawer: () => void;
@@ -12,22 +12,35 @@ export interface GeneralCategoryProp {
   category: ICategory;
 }
 
-export interface CategoryProps
-  extends DrawerCategoriesProps,
-    GeneralCategoryProp {
+export interface CategoryUpdateProps {
   onUpdate: () => void;
   isUpdate: boolean;
 }
+
+export interface CategoryProps
+  extends DrawerCategoriesProps,
+    GeneralCategoryProp,
+    CategoryUpdateProps {}
 
 export interface CategoryScreenProps extends GeneralCategoryProp {
   isSubCategory: boolean;
 }
 
-export interface DrawerCategoriesProps {
+export interface DrawerCategoriesGeneralProps {
   setCurrentCategory: (category: ICategory) => void;
   setIsSubCategory: (isSubCategory: boolean) => void;
-  screenChanger: (screenName: screens, isSub?: boolean) => void;
   isSubCategory: boolean;
+}
+
+export interface EditCategoryProps
+  extends DrawerCategoriesGeneralProps,
+    CategoryUpdateProps,
+    GeneralCategoryProp {}
+
+export interface EditCategoriesProps extends DrawerCategoriesGeneralProps {}
+
+export interface DrawerCategoriesProps extends DrawerCategoriesGeneralProps {
+  screenChanger: (screenName: screens, isSub?: boolean) => void;
 }
 
 export interface CategoriesProps extends DrawerCategoriesProps {}
@@ -67,6 +80,7 @@ export interface ISubCategory extends GeneralCategory {}
 
 export interface ICategory extends GeneralCategory {
   subCategories?: ISubCategory[];
+  categoryId?: number;
 }
 
 export interface GeneralDialog {
@@ -90,6 +104,7 @@ export interface UserSliceState {
   userInfo: IUser;
   token: string;
   loggedIn: boolean;
+  userId: string;
 }
 
 export interface IconColorFormGeneral {
@@ -104,4 +119,44 @@ export interface IconFormProps extends IconColorFormGeneral {
 
 export interface ColorFormProps extends IconColorFormGeneral {
   onColorPress: (color: string) => void;
+}
+interface DirProp {
+  dir: direction;
+}
+
+interface IsSubProp {
+  isSubCategory: boolean;
+}
+
+export interface EditCategoryIconsProps
+  extends DirProp,
+    IsSubProp,
+    GeneralCategoryProp {}
+
+export interface EditCategoryAccordionContentProps extends GeneralCategoryProp {
+  dir: direction;
+}
+
+export interface LocaleSliceState {
+  dir: direction;
+  lang: language;
+}
+
+export interface EditSubCategoriesContentProps
+  extends DirProp,
+    GeneralCategoryProp {}
+
+export interface AddSubCategoryContentProps extends DirProp {
+  setOpen: () => void;
+}
+
+export interface EditCategoriesAccordionContentProps extends DirProp {}
+
+export interface AddCategoryContentProps extends AddSubCategoryContentProps {}
+
+export interface UpdateCategoryProps {
+  category: ICategory;
+  isSubCategory: boolean;
+  open: boolean;
+  onBackPress: () => void;
 }

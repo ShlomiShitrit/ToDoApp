@@ -1,19 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
-import {ListItem, Icon} from '@rneui/themed';
-import Category from '../Category/Category';
-import {ICategory, CategoriesProps} from '../../general/interfaces';
+import {ListItem} from '@rneui/themed';
+import EditCategory from '../Category/EditCategory';
+import {ICategory, EditCategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
 import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
+import EditCategoriesAccordionContent from './EditCategoriesAccordionContent';
+import AddCategoriesContent from './AddCategoriesContent';
 
-export default function Categories({
-  setCurrentCategory,
-  setIsSubCategory,
-  screenChanger,
+export default function EditCategories({
   isSubCategory,
-}: CategoriesProps) {
+  setIsSubCategory,
+  setCurrentCategory,
+}: EditCategoriesProps) {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -39,68 +40,31 @@ export default function Categories({
       }
     };
     fetchCategories();
-  }, [userToken, isUpdate]);
+  }, [userToken, isUpdate, isUpdate]);
 
   return (
     <>
       <ListItem.Accordion
         containerStyle={styles.listItem}
-        content={
-          <>
-            <ListItem.Content
-              style={dir === 'rtl' ? styles.contentRtl : styles.contentLtr}>
-              {dir === 'ltr' ? (
-                <Icon
-                  style={styles.icon}
-                  name="layer-group"
-                  type="font-awesome-5"
-                />
-              ) : null}
-              <ListItem.Title style={styles.listTitle}>
-                Categories
-              </ListItem.Title>
-              {dir === 'rtl' ? (
-                <Icon
-                  style={styles.icon}
-                  name="layer-group"
-                  type="font-awesome-5"
-                />
-              ) : null}
-            </ListItem.Content>
-          </>
-        }
+        content={<EditCategoriesAccordionContent dir={dir} />}
         isExpanded={expanded}
         onPress={() => setExpanded(!expanded)}
         noIcon={true}>
         {categories.map !== undefined && isLoggedIn
           ? categories?.map((category, index) => (
-              <Category
+              <EditCategory
                 key={index}
                 category={category}
-                setCurrentCategory={setCurrentCategory}
-                setIsSubCategory={setIsSubCategory}
-                screenChanger={screenChanger}
                 isSubCategory={true}
+                setIsSubCategory={setIsSubCategory}
+                setCurrentCategory={setCurrentCategory}
                 onUpdate={() => setIsUpdate(!isUpdate)}
                 isUpdate={isUpdate}
               />
             ))
           : null}
         <ListItem containerStyle={styles.listItem}>
-          <ListItem.Content
-            style={dir === 'rtl' ? styles.contentRtl : styles.contentLtr}>
-            {dir === 'ltr' ? (
-              <Icon style={styles.icon} name="plus" type="ant-design" />
-            ) : null}
-            <ListItem.Title
-              style={styles.listTitle}
-              onPress={() => setOpen(true)}>
-              Add Category
-            </ListItem.Title>
-            {dir === 'rtl' ? (
-              <Icon style={styles.icon} name="plus" type="ant-design" />
-            ) : null}
-          </ListItem.Content>
+          <AddCategoriesContent dir={dir} setOpen={() => setOpen(true)} />
         </ListItem>
       </ListItem.Accordion>
       <AddCategoryDialog
@@ -119,24 +83,5 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
     borderBottomWidth: 1,
     padding: 30,
-  },
-  contentRtl: {
-    position: 'absolute',
-    right: 0,
-    flexDirection: 'row',
-  },
-  contentLtr: {
-    position: 'absolute',
-    left: 0,
-    flexDirection: 'row',
-  },
-  listTitle: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  icon: {
-    marginLeft: 15,
-    marginRight: 15,
   },
 });

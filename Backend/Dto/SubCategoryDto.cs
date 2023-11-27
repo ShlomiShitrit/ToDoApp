@@ -7,5 +7,6 @@ namespace Backend.Dto
         public string? IconName { get; set; }
         public string? IconType { get; set; }
         public string? ColorHash { get; set; }
+        public int? CategoryId { get; set; }
     }
 }
