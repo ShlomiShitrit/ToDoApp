@@ -6,7 +6,7 @@ import {ICategory, CategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
-import AddCategoryDialog from '../Forms/AddCategoryDialog';
+import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
 
 export default function Categories({
   setCurrentCategory,
