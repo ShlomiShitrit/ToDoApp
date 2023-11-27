@@ -30,7 +30,8 @@ namespace Backend.Repositories
         }
         public bool DeleteCategory(Category category)
         {
-            throw new NotImplementedException();
+            _context.Remove(category);
+            return Save();
         }
         public bool CategoryExists(int id)
         {

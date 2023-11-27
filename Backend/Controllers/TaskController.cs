@@ -160,7 +160,7 @@ namespace Backend.Controllers
         [HttpDelete("{taskId}")]
         public IActionResult DeleteTask(int taskId)
         {
-            if (_taskRepository.TaskExists(taskId))
+            if (!_taskRepository.TaskExists(taskId))
                 return NotFound();
 
             var taskToDelete = _taskRepository.GetTaskById(taskId);

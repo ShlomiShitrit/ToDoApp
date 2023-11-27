@@ -16,7 +16,8 @@ namespace Backend.Repositories
 
         public bool DeleteSubCategory(SubCategory subCategory)
         {
-            throw new NotImplementedException();
+            _context.Remove(subCategory);
+            return Save();
         }
 
         public ICollection<SubCategory> GetSubCategories()
