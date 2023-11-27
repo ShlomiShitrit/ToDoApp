@@ -7,5 +7,8 @@ namespace Backend.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<TaskModel> Tasks { get; set; }
+        public string? IconName { get; set; }
+        public string? IconType { get; set; }
+        public string? ColorHash { get; set; }
     }
 }

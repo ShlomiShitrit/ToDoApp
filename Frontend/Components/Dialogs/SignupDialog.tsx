@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import {View} from 'react-native';
 import {Dialog} from '@rneui/themed';
-import SignupForm from './SignupForm';
+import SignupForm from '../Forms/SignupForm';
 import {IUser, SignupDialogProps} from '../../general/interfaces';
 import {EMPTY_USER} from '../../general/resources';
 import {API_HOST} from '@env';

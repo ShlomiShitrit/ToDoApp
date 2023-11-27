@@ -4,7 +4,7 @@ import {Text, ListItem, Icon} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
-import AddTaskDialog from '../Forms/AddTaskDialog';
+import AddTaskDialog from '../Dialogs/AddTaskDialog';
 import {API_HOST} from '@env';
 
 const windowHeight = Dimensions.get('window').height;

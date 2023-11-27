@@ -1,4 +1,4 @@
-import {screens} from './types';
+import {screens, categoryIcon} from './types';
 
 export interface HeaderProps {
   openDrawer: () => void;
@@ -58,6 +58,9 @@ export interface SignupFormProps {
 export interface GeneralCategory {
   id: number;
   name: string;
+  iconName: string;
+  iconType: string;
+  colorHash: string;
 }
 
 export interface ISubCategory extends GeneralCategory {}
@@ -87,4 +90,18 @@ export interface UserSliceState {
   userInfo: IUser;
   token: string;
   loggedIn: boolean;
+}
+
+export interface IconColorFormGeneral {
+  clearChoice: () => void;
+  titleCat: string;
+  clickedChoice: string | null;
+}
+
+export interface IconFormProps extends IconColorFormGeneral {
+  onIconPress: (iconObj: categoryIcon) => void;
+}
+
+export interface ColorFormProps extends IconColorFormGeneral {
+  onColorPress: (color: string) => void;
 }

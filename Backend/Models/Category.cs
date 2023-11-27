@@ -8,6 +8,9 @@ namespace Backend.Models
         public ICollection<TaskModel> Tasks { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+        public string? IconName { get; set; }
+        public string? IconType { get; set; }
+        public string? ColorHash { get; set; }
 
     }
 }

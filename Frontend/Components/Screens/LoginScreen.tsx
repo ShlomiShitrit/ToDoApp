@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Text, Button} from '@rneui/themed';
 import {StyleSheet, ScrollView, SafeAreaView} from 'react-native';
 import LoginForm from '../Forms/LoginForm';
-import SignupDialog from '../Forms/SignupDialog';
+import SignupDialog from '../Dialogs/SignupDialog';
 
 export default function LoginScreen() {
   const [open, setOpen] = useState<boolean>(false);

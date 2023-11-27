@@ -4,7 +4,7 @@ import {ListItem, Icon} from '@rneui/themed';
 import {CategoryProps, ICategory} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
-import AddCategoryDialog from '../Forms/AddCategoryDialog';
+import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
 import {API_HOST} from '@env';
 
 export default function Category({
@@ -63,14 +63,30 @@ export default function Category({
   return (
     <>
       <ListItem.Accordion
-        containerStyle={styles.listItem}
+        containerStyle={[
+          styles.listItem,
+          {backgroundColor: category?.colorHash},
+        ]}
         key={category?.id}
         content={
           <ListItem.Content>
-            <ListItem.Title
-              style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
-              {category?.name}
-            </ListItem.Title>
+            <View
+              style={
+                dir === 'rtl' ? styles.rowContainerRtl : styles.rowContainerLtr
+              }>
+              {dir === 'ltr' ? (
+                <Icon name={category?.iconName} type={category?.iconType} />
+              ) : null}
+              <ListItem.Title
+                style={
+                  dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr
+                }>
+                {category?.name}
+              </ListItem.Title>
+              {dir === 'rtl' ? (
+                <Icon name={category?.iconName} type={category?.iconType} />
+              ) : null}
+            </View>
           </ListItem.Content>
         }
         isExpanded={expanded}
@@ -80,17 +96,33 @@ export default function Category({
           ? subCategories?.map(sub => (
               <ListItem
                 key={sub?.id}
-                containerStyle={styles.subListItem}
+                containerStyle={[
+                  styles.subListItem,
+                  {backgroundColor: sub?.colorHash},
+                ]}
                 onPress={() => clickCategoryHandler(sub, true)}>
                 <ListItem.Content>
-                  <ListItem.Title
+                  <View
                     style={
                       dir === 'rtl'
-                        ? styles.subListTitleRtl
-                        : styles.subListTitleLtr
+                        ? styles.rowContainerSubRtl
+                        : styles.rowContainerSubLtr
                     }>
-                    {sub?.name}
-                  </ListItem.Title>
+                    {dir === 'ltr' ? (
+                      <Icon name={sub?.iconName} type={sub?.iconType} />
+                    ) : null}
+                    <ListItem.Title
+                      style={
+                        dir === 'rtl'
+                          ? styles.subListTitleRtl
+                          : styles.subListTitleLtr
+                      }>
+                      {sub?.name}
+                    </ListItem.Title>
+                    {dir === 'rtl' ? (
+                      <Icon name={sub?.iconName} type={sub?.iconType} />
+                    ) : null}
+                  </View>
                 </ListItem.Content>
               </ListItem>
             ))
@@ -145,33 +177,25 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginRight: 15,
-    position: 'absolute',
-    right: 0,
+    marginRight: 10,
   },
   listTitleLtr: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 15,
-    position: 'absolute',
-    left: 0,
+    marginLeft: 10,
   },
   subListTitleRtl: {
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
-    position: 'absolute',
-    marginRight: 55,
-    right: 0,
+    marginRight: 10,
   },
   subListTitleLtr: {
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
-    position: 'absolute',
-    marginLeft: 55,
-    left: 0,
+    marginLeft: 10,
   },
   addSubListItem: {
     backgroundColor: '#262c2e',
@@ -197,6 +221,17 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   rowContainerLtr: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowContainerSubRtl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 0,
+    marginRight: 60,
+  },
+  rowContainerSubLtr: {
     flexDirection: 'row',
     alignItems: 'center',
   },
