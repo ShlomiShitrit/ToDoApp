@@ -148,6 +148,39 @@ namespace Backend.Controllers
             return NoContent();
         }
 
+
+        [HttpPut("{subCategoryId}")]
+        [Authorize]
+        public IActionResult UpdateSubCategory(int subCategoryId, [FromQuery] int categoryId, [FromBody] SubCategoryDto updatedSubCatgory)
+        {
+            if (updatedSubCatgory == null)
+                return BadRequest(ModelState);
+            if (subCategoryId != updatedSubCatgory.Id)
+                return BadRequest(ModelState);
+            if (!_subCategoryRepository.SubCategoryExists(subCategoryId))
+                return NotFound("Subcategory Doesn't exist");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var category = _categoryRepository.GetCategoryById(categoryId);
+
+            if (category == null)
+                return NotFound();
+
+            var subCategoryMap = _mapper.Map<SubCategory>(updatedSubCatgory);
+            subCategoryMap.CategoryId = category.Id;
+
+
+            if (!_subCategoryRepository.UpdateSubCategory(subCategoryMap))
+            {
+                ModelState.AddModelError("SubCategory", "Something went wrong updating subcategory");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+
+        }
+
         internal User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;

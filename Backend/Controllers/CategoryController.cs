@@ -145,6 +145,39 @@ namespace Backend.Controllers
             return Ok("Successfully created");
         }
 
+        [HttpPut("{categoryId}")]
+        [Authorize]
+        public IActionResult UpdateSubCategory(int categoryId, [FromQuery] int userId,
+        [FromBody] CategoryDto updatedCatgory)
+        {
+            if (updatedCatgory == null)
+                return BadRequest(ModelState);
+            if (categoryId != updatedCatgory.Id)
+                return BadRequest(ModelState);
+            if (!_categoryRepository.CategoryExists(categoryId))
+                return NotFound("Category Doesn't exist");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = _userRepository.GetUserById(userId);
+
+            if (user == null)
+                return NotFound("User doesn't exists");
+
+            var categoryMap = _mapper.Map<Category>(updatedCatgory);
+            categoryMap.UserId = user.Id;
+
+
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+            {
+                ModelState.AddModelError("Category", "Something went wrong updating category");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+
+        }
+
         [HttpDelete("{categoryId}")]
         [Authorize]
         public IActionResult DeleteCategory(int categoryId)

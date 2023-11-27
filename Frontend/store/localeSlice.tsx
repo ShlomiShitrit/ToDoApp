@@ -1,8 +1,9 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {LocaleSliceState} from '../general/interfaces';
 
 export const localeSlice = createSlice({
   name: 'locale',
-  initialState: {lang: 'he', dir: 'rtl'},
+  initialState: {lang: 'he', dir: 'rtl'} as LocaleSliceState,
   reducers: {
     setLocaleToEn: state => {
       state.lang = 'en';

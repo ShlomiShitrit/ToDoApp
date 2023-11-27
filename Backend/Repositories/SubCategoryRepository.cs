@@ -48,7 +48,8 @@ namespace Backend.Repositories
 
         public bool UpdateSubCategory(SubCategory subCategory)
         {
-            throw new NotImplementedException();
+            _context.Update(subCategory);
+            return Save();
         }
     }
 }

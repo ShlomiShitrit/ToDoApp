@@ -104,11 +104,15 @@ namespace Backend.Controllers
             var user = GetCurrentUser();
             if (user == null)
                 return NotFound("No user is logged in");
+            var userFromDb = _userRepository.GetUserById(user.Id);
+
+            if (userFromDb == null)
+                return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(user);
+            return Ok(userFromDb);
         }
 
         internal User GetCurrentUser()

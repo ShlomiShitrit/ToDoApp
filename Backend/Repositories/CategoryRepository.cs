@@ -26,7 +26,8 @@ namespace Backend.Repositories
         }
         public bool UpdateCategory(Category category)
         {
-            throw new NotImplementedException();
+            _context.Update(category);
+            return Save();
         }
         public bool DeleteCategory(Category category)
         {

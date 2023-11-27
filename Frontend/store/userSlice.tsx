@@ -6,6 +6,7 @@ const initialState: UserSliceState = {
   userInfo: EMPTY_USER,
   loggedIn: false,
   token: '',
+  userId: '',
 };
 
 export const userSlice = createSlice({
@@ -25,6 +26,9 @@ export const userSlice = createSlice({
       state.userInfo = EMPTY_USER;
       state.token = '';
       state.loggedIn = false;
+    },
+    setUserId: (state, action) => {
+      state.userId = action.payload;
     },
   },
 });

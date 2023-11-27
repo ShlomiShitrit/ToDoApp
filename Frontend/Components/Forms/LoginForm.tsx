@@ -59,6 +59,7 @@ export default function LoginForm() {
         });
         const userInfo = await response.json();
         dispatch(userAction.setUser(userInfo));
+        dispatch(userAction.setUserId(userInfo.id));
       } catch (error) {
         console.log(error);
       }
