@@ -10,6 +10,7 @@ import Header from './Components/UI/Header';
 import HomeScreen from './Components/Screens/HomeScreen';
 import UserScreen from './Components/Screens/UserScreen';
 import CategoriesScreen from './Components/Screens/CategoriesScreen';
+import SettingsScreen from './Components/Screens/SettingsScreen';
 import DrawerContent from './Components/UI/DrawerContent';
 import {screens} from './general/types';
 import LoginScreen from './Components/Screens/LoginScreen';
@@ -97,6 +98,8 @@ export default function AppEntry() {
             isSubCategory={isSubCategory}
           />
         );
+      case 'Settings':
+        return <SettingsScreen />;
       default:
         return <HomeScreen />;
     }
@@ -109,6 +112,7 @@ export default function AppEntry() {
         ref={drawer}
         drawerWidth={300}
         drawerPosition="left"
+        drawerBackgroundColor="#262c2e"
         renderNavigationView={() => (
           <DrawerContent
             screenChanger={screenChanger}

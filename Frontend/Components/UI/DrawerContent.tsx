@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
-import {ListItem, Icon, Button} from '@rneui/themed';
+import {ListItem, Icon} from '@rneui/themed';
 import Categories from '../Categories/Categories';
 import {DrawerContentProps} from '../../general/interfaces';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
@@ -18,36 +18,84 @@ export default function DrawerContent({
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
   const dispatch = useAppDispatch();
 
-  const navRoutes = [
+  const topNavRoutes = [
     {
       name: 'Home',
       icon: 'home',
       iconType: 'feather',
       changeRoute: () => screenChanger('Home', true),
     },
+  ];
+
+  const bottomNavRoutes = [
+    {
+      name: 'Settings',
+      icon: 'settings',
+      iconType: 'materialIcons',
+      onClick: () => screenChanger('Settings', true),
+    },
     {
       name: 'User',
       icon: 'user',
       iconType: 'feather',
-      changeRoute: () => screenChanger('User', true),
+      onClick: () => screenChanger('User', true),
+    },
+    {
+      name: 'Logout',
+      icon: 'logout',
+      iconType: 'materialIcons',
+      onClick: () => dispatch(userAction.logout()),
     },
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.secondaeyContainer}>
-        <Icon
-          name="close"
-          color="white"
-          type="AntDesign"
-          onPress={closeDrawer}
-          style={dir === 'ltr' ? styles.iconLtr : styles.iconRtl}
-        />
-        {navRoutes.map((route, index) => (
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.secondaeyContainer}>
+          <Icon
+            name="close"
+            color="white"
+            type="AntDesign"
+            onPress={closeDrawer}
+            style={dir === 'ltr' ? styles.iconLtr : styles.iconRtl}
+          />
+          {topNavRoutes.map((route, index) => (
+            <ListItem
+              key={index}
+              containerStyle={styles.listItem}
+              onPress={route?.changeRoute}>
+              {dir === 'ltr' ? (
+                <Icon name={route?.icon} type={route?.iconType} />
+              ) : null}
+              <ListItem.Content>
+                <ListItem.Title
+                  style={
+                    dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr
+                  }>
+                  {route?.name}
+                </ListItem.Title>
+              </ListItem.Content>
+              {dir === 'rtl' ? (
+                <Icon name={route?.icon} type={route?.iconType} />
+              ) : null}
+            </ListItem>
+          ))}
+          {isLoggedIn ? (
+            <Categories
+              setCurrentCategory={setCurrentCategory}
+              setIsSubCategory={setIsSubCategory}
+              screenChanger={screenChanger}
+              isSubCategory={isSubCategory}
+            />
+          ) : null}
+        </View>
+      </ScrollView>
+      <View style={styles.bottomContainer}>
+        {bottomNavRoutes.map((route, index) => (
           <ListItem
             key={index}
             containerStyle={styles.listItem}
-            onPress={route?.changeRoute}>
+            onPress={route?.onClick}>
             {dir === 'ltr' ? (
               <Icon name={route?.icon} type={route?.iconType} />
             ) : null}
@@ -64,21 +112,8 @@ export default function DrawerContent({
             ) : null}
           </ListItem>
         ))}
-        {isLoggedIn ? (
-          <Categories
-            setCurrentCategory={setCurrentCategory}
-            setIsSubCategory={setIsSubCategory}
-            screenChanger={screenChanger}
-            isSubCategory={isSubCategory}
-          />
-        ) : null}
-        <Button
-          title="Logout"
-          containerStyle={styles.button}
-          onPress={() => dispatch(userAction.logout())}
-        />
       </View>
-    </ScrollView>
+    </>
   );
 }
 
@@ -90,6 +125,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 25,
     backgroundColor: '#262c2e',
+  },
+  bottomContainer: {
+    position: 'relative',
+    bottom: 0,
+    marginTop: 30,
   },
   iconRtl: {
     marginTop: 10,
