@@ -14,7 +14,6 @@ export default function Category({
   category,
   isSubCategory,
   onUpdate,
-  setCurrentCategory,
   setIsSubCategory,
   isUpdate,
 }: EditCategoryProps): JSX.Element {
@@ -53,10 +52,8 @@ export default function Category({
     if (!isSub) {
       setExpanded(!expanded);
       setIsSubCategory(false);
-      setCurrentCategory(clickedCategory);
     } else {
       setIsSubCategory(true);
-      setCurrentCategory(clickedCategory);
     }
   };
 

@@ -26,18 +26,21 @@ export interface CategoryScreenProps extends GeneralCategoryProp {
   isSubCategory: boolean;
 }
 
-export interface DrawerCategoriesGeneralProps {
-  setCurrentCategory: (category: ICategory) => void;
+export interface IsSubProps {
   setIsSubCategory: (isSubCategory: boolean) => void;
   isSubCategory: boolean;
 }
 
+export interface DrawerCategoriesGeneralProps extends IsSubProps {
+  setCurrentCategory: (category: ICategory) => void;
+}
+
 export interface EditCategoryProps
-  extends DrawerCategoriesGeneralProps,
+  extends IsSubProps,
     CategoryUpdateProps,
     GeneralCategoryProp {}
 
-export interface EditCategoriesProps extends DrawerCategoriesGeneralProps {}
+export interface EditCategoriesProps extends IsSubProps {}
 
 export interface DrawerCategoriesProps extends DrawerCategoriesGeneralProps {
   screenChanger: (screenName: screens, isSub?: boolean) => void;
@@ -159,4 +162,10 @@ export interface UpdateCategoryProps {
   isSubCategory: boolean;
   open: boolean;
   onBackPress: () => void;
+}
+
+export interface DeleteCategoryDialogProps {
+  open: boolean;
+  onBackPress: () => void;
+  editHandler: () => void;
 }

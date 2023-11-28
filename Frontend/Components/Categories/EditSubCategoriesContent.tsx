@@ -18,11 +18,13 @@ export default function EditSubCategoriesContent({
           <Icon name={category?.iconName} type={category?.iconType} />
         ) : null}
         {dir === 'rtl' ? (
-          <EditCategoryIcons
-            dir={dir}
-            isSubCategory={true}
-            category={category}
-          />
+          <View style={styles.iconContainer}>
+            <EditCategoryIcons
+              dir={dir}
+              isSubCategory={true}
+              category={category}
+            />
+          </View>
         ) : null}
         <ListItem.Title
           style={
@@ -34,11 +36,13 @@ export default function EditSubCategoriesContent({
           <Icon name={category?.iconName} type={category?.iconType} />
         ) : null}
         {dir === 'ltr' ? (
-          <EditCategoryIcons
-            dir={dir}
-            isSubCategory={true}
-            category={category}
-          />
+          <View style={styles.iconContainer}>
+            <EditCategoryIcons
+              dir={dir}
+              isSubCategory={true}
+              category={category}
+            />
+          </View>
         ) : null}
       </View>
     </ListItem.Content>
@@ -68,5 +72,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  iconContainer: {
+    flex: 1,
   },
 });
