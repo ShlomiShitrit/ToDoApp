@@ -4,14 +4,16 @@ import {Icon} from '@rneui/themed';
 import {useAppSelector} from '../../hooks/store';
 import {EditCategoryIconsProps} from '../../general/interfaces';
 import {API_HOST} from '@env';
-import UpdateCategory from '../Dialogs/UpdateCategory';
+import UpdateCategoryDialog from '../Dialogs/UpdateCategoryDialog';
+import DeleteCategoryDialog from '../Dialogs/DeleteCategoryDialog';
 
 export default function EditCategoryIcons({
   dir,
   isSubCategory,
   category,
 }: EditCategoryIconsProps): JSX.Element {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   const marginStyle =
     dir === 'rtl' ? styles.editMarginRtl : styles.editMarginLtr;
@@ -28,6 +30,7 @@ export default function EditCategoryIcons({
         },
       });
       if (response.ok) {
+        setOpenDelete(false);
         console.log('Deleted');
       } else {
         const errorData = await response.json();
@@ -41,18 +44,28 @@ export default function EditCategoryIcons({
   return (
     <>
       <View style={[styles.editContainer, marginStyle]}>
-        <Icon name={'delete'} type={'materialIcons'} onPress={deleteHandler} />
         <Icon
+          name={'delete'}
+          type={'materialIcons'}
+          onPress={() => setOpenDelete(true)}
+        />
+        <Icon
+          style={styles.icon}
           name={'edit'}
           type={'materialIcons'}
-          onPress={() => setOpen(true)}
+          onPress={() => setOpenEdit(true)}
         />
       </View>
-      <UpdateCategory
-        open={open}
-        onBackPress={() => setOpen(false)}
+      <UpdateCategoryDialog
+        open={openEdit}
+        onBackPress={() => setOpenEdit(false)}
         isSubCategory={isSubCategory}
         category={category}
+      />
+      <DeleteCategoryDialog
+        open={openDelete}
+        onBackPress={() => setOpenDelete(false)}
+        editHandler={deleteHandler}
       />
     </>
   );
@@ -63,9 +76,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   editMarginRtl: {
-    marginRight: '50%',
+    marginRight: '40%',
   },
   editMarginLtr: {
-    marginLeft: '50%',
+    marginLeft: '40%',
+  },
+  icon: {
+    marginLeft: '20%',
   },
 });

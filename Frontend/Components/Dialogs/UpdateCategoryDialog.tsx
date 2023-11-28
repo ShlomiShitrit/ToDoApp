@@ -8,7 +8,7 @@ import {useAppSelector} from '../../hooks/store';
 import {UpdateCategoryProps} from '../../general/interfaces';
 import {API_HOST} from '@env';
 
-export default function UpdateCategory({
+export default function UpdateCategoryDialog({
   open,
   onBackPress,
   isSubCategory,

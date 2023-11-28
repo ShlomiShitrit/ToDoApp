@@ -13,7 +13,6 @@ import AddCategoriesContent from './AddCategoriesContent';
 export default function EditCategories({
   isSubCategory,
   setIsSubCategory,
-  setCurrentCategory,
 }: EditCategoriesProps) {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -57,7 +56,6 @@ export default function EditCategories({
                 category={category}
                 isSubCategory={true}
                 setIsSubCategory={setIsSubCategory}
-                setCurrentCategory={setCurrentCategory}
                 onUpdate={() => setIsUpdate(!isUpdate)}
                 isUpdate={isUpdate}
               />

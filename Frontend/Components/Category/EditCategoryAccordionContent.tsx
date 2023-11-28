@@ -15,11 +15,13 @@ export default function EditCategoryAccordionContent({
         <Icon name={category?.iconName} type={category?.iconType} />
       ) : null}
       {dir === 'rtl' ? (
-        <EditCategoryIcons
-          dir={dir}
-          isSubCategory={false}
-          category={category}
-        />
+        <View style={styles.iconContainer}>
+          <EditCategoryIcons
+            dir={dir}
+            isSubCategory={false}
+            category={category}
+          />
+        </View>
       ) : null}
       <ListItem.Title
         style={dir === 'rtl' ? styles.listTitleRtl : styles.listTitleLtr}>
@@ -29,11 +31,13 @@ export default function EditCategoryAccordionContent({
         <Icon name={category?.iconName} type={category?.iconType} />
       ) : null}
       {dir === 'ltr' ? (
-        <EditCategoryIcons
-          dir={dir}
-          isSubCategory={false}
-          category={category}
-        />
+        <View style={styles.iconContainer}>
+          <EditCategoryIcons
+            dir={dir}
+            isSubCategory={false}
+            category={category}
+          />
+        </View>
       ) : null}
     </View>
   );
@@ -62,5 +66,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  iconContainer: {
+    flex: 1,
   },
 });
