@@ -72,7 +72,7 @@ export default function Categories({
         isExpanded={expanded}
         onPress={() => setExpanded(!expanded)}
         noIcon={true}>
-        {categories.map !== undefined && isLoggedIn
+        {Array.isArray(categories) && categories.length > 0 && isLoggedIn
           ? categories?.map((category, index) => (
               <Category
                 key={index}

@@ -39,7 +39,7 @@ export default function EditCategories({
       }
     };
     fetchCategories();
-  }, [userToken, isUpdate, isUpdate]);
+  }, [userToken, isUpdate]);
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function EditCategories({
         isExpanded={expanded}
         onPress={() => setExpanded(!expanded)}
         noIcon={true}>
-        {categories.map !== undefined && isLoggedIn
+        {Array.isArray(categories) && categories.length > 0 && isLoggedIn
           ? categories?.map((category, index) => (
               <EditCategory
                 key={index}

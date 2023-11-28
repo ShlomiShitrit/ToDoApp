@@ -92,7 +92,9 @@ export default function Category({
         isExpanded={expanded}
         onPress={() => clickCategoryHandler(category)}
         noIcon={true}>
-        {subCategories
+        {Array.isArray(subCategories) &&
+        subCategories.length > 0 &&
+        subCategories
           ? subCategories?.map(sub => (
               <ListItem
                 key={sub?.id}

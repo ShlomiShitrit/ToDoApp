@@ -7,6 +7,7 @@ import {EditCategoryAccordionContentProps} from '../../general/interfaces';
 export default function EditCategoryAccordionContent({
   category,
   dir,
+  onUpdate,
 }: EditCategoryAccordionContentProps): JSX.Element {
   return (
     <View
@@ -17,6 +18,7 @@ export default function EditCategoryAccordionContent({
       {dir === 'rtl' ? (
         <View style={styles.iconContainer}>
           <EditCategoryIcons
+            onUpdate={onUpdate}
             dir={dir}
             isSubCategory={false}
             category={category}
@@ -33,6 +35,7 @@ export default function EditCategoryAccordionContent({
       {dir === 'ltr' ? (
         <View style={styles.iconContainer}>
           <EditCategoryIcons
+            onUpdate={onUpdate}
             dir={dir}
             isSubCategory={false}
             category={category}
