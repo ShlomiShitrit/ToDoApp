@@ -11,6 +11,8 @@ export default function AddTaskDialog({
   onBackPress,
   onUpdate,
   category,
+  method,
+  task,
 }: AddTaskDialogProps): JSX.Element {
   const [taskTitle, setTaskTitle] = useState<string>('');
   const [taskSubTitle, setTaskSubTitle] = useState<string>('');
@@ -18,21 +20,32 @@ export default function AddTaskDialog({
   const userToken = useAppSelector(state => state.user.token);
 
   const onSubmit = async () => {
-    const url = isSubCategory
+    const catUrl = isSubCategory
       ? `subcategory?subCategoryId=${category?.id}`
       : `category?categoryId=${category?.id}`;
-
+    const url = method === 'POST' ? `Task/${catUrl}` : `Task/${task?.id}`;
+    const taskObj =
+      method === 'POST'
+        ? {
+            title: taskTitle,
+            subTitle: taskSubTitle,
+          }
+        : {
+            id: task?.id,
+            title: taskTitle,
+            subTitle: taskSubTitle,
+            checked: task?.checked,
+            categoryId: task?.categoryId,
+            subCategoryId: task?.subCategoryId,
+          };
     try {
-      const response = await fetch(`${API_HOST}api/Task/${url}`, {
-        method: 'POST',
+      const response = await fetch(`${API_HOST}api/${url}`, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userToken}`,
         },
-        body: JSON.stringify({
-          title: taskTitle,
-          subTitle: taskSubTitle,
-        }),
+        body: JSON.stringify(taskObj),
       });
 
       if (response.ok) {

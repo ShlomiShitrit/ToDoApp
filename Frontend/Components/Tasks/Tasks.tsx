@@ -1,16 +1,27 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ListItem, Text} from '@rneui/themed';
+import {StyleSheet, View, Dimensions} from 'react-native';
+import {Icon, ListItem, Text} from '@rneui/themed';
 import {ITask, TasksProps} from '../../general/interfaces';
 import useLang from '../../hooks/useLang';
 import {API_HOST} from '@env';
+import AddTaskDialog from '../Dialogs/AddTaskDialog';
+import DeleteCategoryDialog from '../Dialogs/DeleteCategoryDialog';
+import {useAppSelector} from '../../hooks/store';
+
+const windowWidth = Dimensions.get('window').width;
 
 export default function Tasks({
   tasks: initialTasks,
   category,
   isSubCategory,
+  isEditMode,
+  onUpdate,
 }: TasksProps): JSX.Element {
   const [tasks, setTasks] = useState<ITask[]>([]);
+  const [openEditDialogs, setOpenEditDialogs] = useState<boolean[]>([]);
+  const [openDeleteDialogs, setOpenDeleteDialogs] = useState<boolean[]>([]);
+
+  const userToken = useAppSelector(state => state.user.token);
 
   const {dir} = useLang();
 
@@ -19,6 +30,22 @@ export default function Tasks({
       setTasks(initialTasks);
     }
   }, [initialTasks]);
+
+  useEffect(() => {
+    setOpenEditDialogs(Array(tasks.length).fill(false));
+    setOpenDeleteDialogs(Array(tasks.length).fill(false));
+  }, [tasks]);
+
+  const toggleEditDialog = (index: number, toggleTo: boolean) => {
+    const updatedOpenDialogs = [...openEditDialogs];
+    updatedOpenDialogs[index] = toggleTo;
+    setOpenEditDialogs(updatedOpenDialogs);
+  };
+  const toggleDeleteDialog = (index: number, toggleTo: boolean) => {
+    const updatedOpenDialogs = [...openDeleteDialogs];
+    updatedOpenDialogs[index] = toggleTo;
+    setOpenDeleteDialogs(updatedOpenDialogs);
+  };
 
   const checkTaskHandler = async (task: ITask) => {
     const updatedTasks = tasks.map(t =>
@@ -44,6 +71,7 @@ export default function Tasks({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${userToken}`,
         },
         body: JSON.stringify(taskToUpdate),
       });
@@ -57,57 +85,133 @@ export default function Tasks({
     }
   };
 
+  const deleteHandler = async (task: ITask) => {
+    const updatedTasks = tasks.filter(t => t?.id !== task?.id);
+    setTasks(updatedTasks);
+
+    try {
+      const response = await fetch(`${API_HOST}api/Task/${task?.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      if (response.ok) {
+        console.log('Task deleted successfully');
+      } else {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || 'Something went wrong');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      {tasks.map(task => (
-        <ListItem
-          key={task?.id}
-          containerStyle={[
-            styles.container,
-            dir === 'rtl' ? styles.alignItemsRtl : styles.alignItemsLtr,
-          ]}>
-          <ListItem.Content>
-            <View style={styles.rowContainer}>
-              {dir === 'ltr' ? (
-                <ListItem.CheckBox
-                  containerStyle={styles.checkBoxContainerLtr}
-                  checkedColor="white"
-                  iconType="material-community"
-                  checkedIcon="checkbox-marked"
-                  uncheckedIcon="checkbox-blank-outline"
-                  checked={task?.checked}
-                  onPress={() => checkTaskHandler(task)}
-                />
-              ) : null}
-              <ListItem.Title>
-                <Text
-                  style={
-                    task?.checked ? styles.listTitleChecked : styles.listTitle
-                  }>
-                  {task?.title}
-                </Text>
-              </ListItem.Title>
-              {dir === 'rtl' ? (
-                <ListItem.CheckBox
-                  containerStyle={styles.checkBoxContainerRtl}
-                  checkedColor="white"
-                  iconType="material-community"
-                  checkedIcon="checkbox-marked"
-                  uncheckedIcon="checkbox-blank-outline"
-                  checked={task?.checked}
-                  onPress={() => checkTaskHandler(task)}
-                />
-              ) : null}
-            </View>
-            <ListItem.Subtitle
-              style={
-                task?.checked ? styles.listSubtitleChecked : styles.listSubtitle
-              }>
-              {task?.subTitle}
-            </ListItem.Subtitle>
-          </ListItem.Content>
-        </ListItem>
-      ))}
+      {tasks &&
+        Array.isArray(tasks) &&
+        tasks.length > 0 &&
+        tasks.map((task, index) => (
+          <View key={index}>
+            <ListItem
+              containerStyle={[
+                styles.container,
+                dir === 'rtl' ? styles.alignItemsRtl : styles.alignItemsLtr,
+              ]}>
+              <ListItem.Content>
+                <View style={styles.rowContainer}>
+                  {dir === 'ltr' ? (
+                    <ListItem.CheckBox
+                      containerStyle={styles.checkBoxContainerLtr}
+                      checkedColor="white"
+                      iconType="material-community"
+                      checkedIcon="checkbox-marked"
+                      uncheckedIcon="checkbox-blank-outline"
+                      checked={task?.checked}
+                      onPress={() => checkTaskHandler(task)}
+                    />
+                  ) : null}
+                  {isEditMode && dir === 'rtl' ? (
+                    <View style={styles.editIconContainerRtl}>
+                      <Icon
+                        name="edit"
+                        type="materialIcon"
+                        style={styles.editIcon}
+                        onPress={() => toggleEditDialog(index, true)}
+                      />
+                      <Icon
+                        name="delete"
+                        type="materialIcon"
+                        onPress={() => toggleDeleteDialog(index, true)}
+                      />
+                    </View>
+                  ) : null}
+                  <ListItem.Title>
+                    <Text
+                      style={
+                        task?.checked
+                          ? styles.listTitleChecked
+                          : styles.listTitle
+                      }>
+                      {task?.title}
+                    </Text>
+                  </ListItem.Title>
+                  {isEditMode && dir === 'ltr' ? (
+                    <View style={styles.editIconContainerLtr}>
+                      <Icon
+                        name="edit"
+                        type="materialIcon"
+                        style={styles.editIcon}
+                        onPress={() => toggleEditDialog(index, true)}
+                      />
+                      <Icon
+                        name="delete"
+                        type="materialIcon"
+                        onPress={() => toggleDeleteDialog(index, true)}
+                      />
+                    </View>
+                  ) : null}
+                  {dir === 'rtl' ? (
+                    <ListItem.CheckBox
+                      containerStyle={styles.checkBoxContainerRtl}
+                      checkedColor="white"
+                      iconType="material-community"
+                      checkedIcon="checkbox-marked"
+                      uncheckedIcon="checkbox-blank-outline"
+                      checked={task?.checked}
+                      onPress={() => checkTaskHandler(task)}
+                    />
+                  ) : null}
+                </View>
+                <View style={styles.subTitleContainer}>
+                  <ListItem.Subtitle
+                    style={
+                      task?.checked
+                        ? styles.listSubtitleChecked
+                        : styles.listSubtitle
+                    }>
+                    {task?.subTitle}
+                  </ListItem.Subtitle>
+                </View>
+              </ListItem.Content>
+            </ListItem>
+            <AddTaskDialog
+              open={openEditDialogs[index]}
+              onBackPress={() => toggleEditDialog(index, false)}
+              onUpdate={onUpdate}
+              category={category}
+              isSubCategory={isSubCategory}
+              method={'PUT'}
+              task={task}
+            />
+            <DeleteCategoryDialog
+              open={openDeleteDialogs[index]}
+              onBackPress={() => toggleDeleteDialog(index, false)}
+              editHandler={() => deleteHandler(task)}
+            />
+          </View>
+        ))}
     </>
   );
 }
@@ -119,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#262c2e',
     borderBottomColor: 'white',
     borderBottomWidth: 1,
+    paddingBottom: 40,
   },
   alignItemsRtl: {
     alignItems: 'flex-end',
@@ -165,5 +270,23 @@ const styles = StyleSheet.create({
   checkBoxContainerRtl: {
     backgroundColor: '#262c2e',
     paddingLeft: '5%',
+  },
+  subTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    top: '85%',
+    right: 0,
+  },
+  editIconContainerRtl: {
+    flexDirection: 'row',
+    marginRight: windowWidth * 0.1,
+  },
+  editIconContainerLtr: {
+    flexDirection: 'row',
+    marginLeft: windowWidth * 0.1,
+  },
+  editIcon: {
+    marginRight: windowWidth * 0.06,
   },
 });
