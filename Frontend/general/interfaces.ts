@@ -131,12 +131,19 @@ interface IsSubProp {
   isSubCategory: boolean;
 }
 
+interface OnUpdateProp {
+  onUpdate: () => void;
+}
+
 export interface EditCategoryIconsProps
   extends DirProp,
     IsSubProp,
-    GeneralCategoryProp {}
+    GeneralCategoryProp,
+    OnUpdateProp {}
 
-export interface EditCategoryAccordionContentProps extends GeneralCategoryProp {
+export interface EditCategoryAccordionContentProps
+  extends GeneralCategoryProp,
+    OnUpdateProp {
   dir: direction;
 }
 
@@ -147,7 +154,8 @@ export interface LocaleSliceState {
 
 export interface EditSubCategoriesContentProps
   extends DirProp,
-    GeneralCategoryProp {}
+    GeneralCategoryProp,
+    OnUpdateProp {}
 
 export interface AddSubCategoryContentProps extends DirProp {
   setOpen: () => void;
@@ -157,7 +165,7 @@ export interface EditCategoriesAccordionContentProps extends DirProp {}
 
 export interface AddCategoryContentProps extends AddSubCategoryContentProps {}
 
-export interface UpdateCategoryProps {
+export interface UpdateCategoryProps extends OnUpdateProp {
   category: ICategory;
   isSubCategory: boolean;
   open: boolean;

@@ -7,6 +7,7 @@ import {EditSubCategoriesContentProps} from '../../general/interfaces';
 export default function EditSubCategoriesContent({
   dir,
   category,
+  onUpdate,
 }: EditSubCategoriesContentProps): JSX.Element {
   return (
     <ListItem.Content>
@@ -20,6 +21,7 @@ export default function EditSubCategoriesContent({
         {dir === 'rtl' ? (
           <View style={styles.iconContainer}>
             <EditCategoryIcons
+              onUpdate={onUpdate}
               dir={dir}
               isSubCategory={true}
               category={category}
@@ -38,6 +40,7 @@ export default function EditSubCategoriesContent({
         {dir === 'ltr' ? (
           <View style={styles.iconContainer}>
             <EditCategoryIcons
+              onUpdate={onUpdate}
               dir={dir}
               isSubCategory={true}
               category={category}

@@ -45,10 +45,7 @@ export default function Category({
     fetchSubCategories();
   }, [category, userToken, isUpdate]);
 
-  const clickCategoryHandler = (
-    clickedCategory: ICategory,
-    isSub: boolean = false,
-  ) => {
+  const clickCategoryHandler = (isSub: boolean = false) => {
     if (!isSub) {
       setExpanded(!expanded);
       setIsSubCategory(false);
@@ -67,13 +64,19 @@ export default function Category({
         key={category?.id}
         content={
           <ListItem.Content>
-            <EditCategoryAccordionContent dir={dir} category={category} />
+            <EditCategoryAccordionContent
+              dir={dir}
+              category={category}
+              onUpdate={onUpdate}
+            />
           </ListItem.Content>
         }
         isExpanded={expanded}
-        onPress={() => clickCategoryHandler(category)}
+        onPress={() => clickCategoryHandler()}
         noIcon={true}>
-        {subCategories
+        {Array.isArray(subCategories) &&
+        subCategories.length > 0 &&
+        subCategories
           ? subCategories?.map(sub => (
               <ListItem
                 key={sub?.id}
@@ -81,8 +84,12 @@ export default function Category({
                   styles.subListItem,
                   {backgroundColor: sub?.colorHash},
                 ]}
-                onPress={() => clickCategoryHandler(sub, true)}>
-                <EditSubCategoriesContent dir={dir} category={sub} />
+                onPress={() => clickCategoryHandler(true)}>
+                <EditSubCategoriesContent
+                  dir={dir}
+                  category={sub}
+                  onUpdate={onUpdate}
+                />
               </ListItem>
             ))
           : null}

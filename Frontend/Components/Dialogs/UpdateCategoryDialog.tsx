@@ -13,6 +13,7 @@ export default function UpdateCategoryDialog({
   onBackPress,
   isSubCategory,
   category,
+  onUpdate,
 }: UpdateCategoryProps): JSX.Element {
   const [categoryName, setCategoryName] = useState<string>('');
   const [iconToAdd, setIconToAdd] = useState<categoryIcon | null>();
@@ -65,6 +66,7 @@ export default function UpdateCategoryDialog({
         setCategoryName('');
         setClickedIcon(null);
         setClickedColor(null);
+        onUpdate();
         onBackPress();
       } else {
         const errorData = await response.json();
