@@ -6,6 +6,8 @@ export interface HeaderProps {
 
 export interface TasksProps extends CategoryScreenProps {
   tasks: ITask[];
+  isEditMode: boolean;
+  onUpdate: () => void;
 }
 
 export interface GeneralCategoryProp {
@@ -57,6 +59,8 @@ export interface ITask {
   title: string;
   subTitle: string;
   checked: boolean;
+  categoryId?: number;
+  subCategoryId?: number;
 }
 
 export interface IUser {
@@ -99,7 +103,10 @@ export interface AdvancedDialogProps extends GeneralDialog {
 
 export interface SignupDialogProps extends GeneralDialog {}
 
-export interface AddTaskDialogProps extends AdvancedDialogProps {}
+export interface AddTaskDialogProps extends AdvancedDialogProps {
+  method: 'POST' | 'PUT';
+  task?: ITask;
+}
 
 export interface AddCategoryDialogProps extends AdvancedDialogProps {}
 

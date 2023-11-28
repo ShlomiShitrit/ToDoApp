@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
-import {Text, ListItem, Icon} from '@rneui/themed';
+import {Text, ListItem, Icon, Button} from '@rneui/themed';
 import Tasks from '../Tasks/Tasks';
 import {CategoryScreenProps, ITask} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
@@ -14,8 +14,9 @@ export default function CategoriesScreen({
   isSubCategory,
 }: CategoryScreenProps): JSX.Element {
   const [tasks, setTasks] = useState<ITask[]>([]);
-  const [open, setOpen] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [iaEditMode, setIsEditMode] = useState<boolean>(false);
 
   const userToken = useAppSelector(state => state.user.token);
 
@@ -45,18 +46,29 @@ export default function CategoriesScreen({
       <Text h2 h2Style={styles.text}>
         {category?.name}
       </Text>
-      <Icon
-        style={styles.icon}
-        onPress={() => setOpen(true)}
-        name="plus"
-        type="ant-design"
-      />
+      <View style={styles.iconscontainer}>
+        <Icon
+          style={styles.plusIcon}
+          onPress={() => setOpen(true)}
+          name="plus"
+          type="ant-design"
+        />
+        <Button
+          size="sm"
+          containerStyle={styles.button}
+          title="Edit mode"
+          titleStyle={styles.buttonTitle}
+          onPress={() => setIsEditMode(!iaEditMode)}
+        />
+      </View>
       <ScrollView style={styles.scrollView}>
-        {tasks.length > 0 ? (
+        {Array.isArray(tasks) && tasks.length > 0 && tasks ? (
           <Tasks
             tasks={tasks}
             category={category}
             isSubCategory={isSubCategory}
+            isEditMode={iaEditMode}
+            onUpdate={() => setIsUpdate(!isUpdate)}
           />
         ) : (
           <>
@@ -75,6 +87,7 @@ export default function CategoriesScreen({
           onUpdate={() => setIsUpdate(!isUpdate)}
           category={category}
           isSubCategory={isSubCategory}
+          method={'POST'}
         />
       </ScrollView>
     </View>
@@ -113,9 +126,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  icon: {
+  iconscontainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    backgroundColor: '#262c2e',
+  },
+  plusIcon: {},
+  button: {
+    marginLeft: '75%',
+    borderRadius: 20,
+  },
+  buttonTitle: {
+    fontSize: 13,
+    color: 'white',
   },
 });
