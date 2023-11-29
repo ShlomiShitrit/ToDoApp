@@ -9,13 +9,23 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function HomeScreen(): JSX.Element {
   const [weeklyTasks, setWeeklyTasks] = useState<ITask[]>(EMPTY_WEEKLY_TASKS);
+  const [categoryTasks, setCategoryTasks] =
+    useState<ITask[]>(EMPTY_WEEKLY_TASKS);
+  const [subCategoryTasks, setSubCategoryTasks] =
+    useState<ITask[]>(EMPTY_WEEKLY_TASKS);
 
   const userFirstName = useAppSelector(state => state.user.userInfo.firstName);
   const userLastName = useAppSelector(state => state.user.userInfo.lastName);
 
   useEffect(() => {
-    get
+    // TODO: Get all tasks of the user from API
+    // callback to setCategoryTasks and setSubCategoryTasks
+    // filter the tasks by date - only the upcoming week tasks
   }, []);
+
+  useEffect(() => {
+    setWeeklyTasks([...categoryTasks, ...subCategoryTasks]);
+  }, [categoryTasks, subCategoryTasks]);
 
   const date = new Date();
   return (
@@ -41,7 +51,7 @@ export default function HomeScreen(): JSX.Element {
                     {task?.subTitle}
                   </ListItem.Subtitle>
                   <ListItem.Subtitle style={styles.itemDate}>
-                    {date.toLocaleTimeString()}
+                    {date.toLocaleDateString()}
                   </ListItem.Subtitle>
                 </ListItem.Content>
               </ListItem>
