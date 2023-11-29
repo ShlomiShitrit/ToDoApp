@@ -4,7 +4,7 @@ import {Dialog} from '@rneui/themed';
 import SignupForm from '../Forms/SignupForm';
 import {IUser, SignupDialogProps} from '../../general/interfaces';
 import {EMPTY_USER} from '../../general/resources';
-import {API_HOST} from '@env';
+import {signupUser} from '../../general/api';
 
 export default function SignupDialog({
   open,
@@ -16,21 +16,6 @@ export default function SignupDialog({
     setData(newData);
   }, []);
 
-  const submitHandler = async () => {
-    try {
-      const response = await fetch(`${API_HOST}api/User`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-      });
-      const resData = response.json();
-      console.log(resData);
-    } catch (error) {
-      // TODO: Add error handling
-      console.log(error);
-    }
-    onBackPress();
-  };
   return (
     <View>
       <Dialog isVisible={open} onBackdropPress={onBackPress}>
@@ -38,7 +23,10 @@ export default function SignupDialog({
         <SignupForm dataHandler={dataHandler} />
         <Dialog.Actions>
           <Dialog.Button title="Cancel" onPress={onBackPress} />
-          <Dialog.Button title="Submit" onPress={submitHandler} />
+          <Dialog.Button
+            title="Submit"
+            onPress={() => signupUser(data, onBackPress)}
+          />
         </Dialog.Actions>
       </Dialog>
     </View>

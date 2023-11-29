@@ -8,7 +8,7 @@ import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
 import EditCategoryAccordionContent from './EditCategoryAccordionContent';
 import EditSubCategoriesContent from '../Categories/EditSubCategoriesContent';
 import AddSubCategoryContent from './AddSubCategoryContent';
-import {API_HOST} from '@env';
+import {getSubCategories} from '../../general/api';
 
 export default function Category({
   category,
@@ -26,23 +26,7 @@ export default function Category({
   const userToken = useAppSelector(state => state.user.token);
 
   useEffect(() => {
-    const fetchSubCategories = async () => {
-      try {
-        const response = await fetch(
-          `${API_HOST}api/Category/${category?.id}/subcategories`,
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          },
-        );
-        const data = await response.json();
-        setSubCategories(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchSubCategories();
+    getSubCategories(category, userToken, setSubCategories);
   }, [category, userToken, isUpdate]);
 
   const clickCategoryHandler = (isSub: boolean = false) => {

@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Button, Input} from '@rneui/themed';
 import {useAppDispatch, useAppSelector} from '../../hooks/store';
 import {userAction} from '../../store/userSlice';
+import {loginUser, getUserInfoAfterLogin} from '../../general/api';
 import {API_HOST, LOGIN_DEFAULT_EMAIL, LOGIN_DEFAULT_PASSWORD} from '@env';
 
 export default function LoginForm() {
@@ -11,22 +12,6 @@ export default function LoginForm() {
 
   const userToken = useAppSelector(state => state.user.token);
   const dispatch = useAppDispatch();
-
-  const loginUser = async () => {
-    try {
-      const response = await fetch(`${API_HOST}api/Auth/login`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password}),
-      });
-
-      const token = await response.text();
-      dispatch(userAction.setToken(token));
-      dispatch(userAction.setLoggedIn(true));
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // TODO: Remove this useEffect when the app is ready for production
   useEffect(() => {
@@ -52,19 +37,11 @@ export default function LoginForm() {
   }, [dispatch]);
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const response = await fetch(`${API_HOST}api/User/userinfo`, {
-          headers: {Authorization: `Bearer ${userToken}`},
-        });
-        const userInfo = await response.json();
-        dispatch(userAction.setUser(userInfo));
-        dispatch(userAction.setUserId(userInfo.id));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getUserInfo();
+    getUserInfoAfterLogin(
+      userToken,
+      (userInfo: any) => dispatch(userAction.setUser(userInfo)),
+      (userId: number) => dispatch(userAction.setUserId(userId)),
+    );
   }, [userToken, dispatch]);
 
   return (
@@ -85,7 +62,14 @@ export default function LoginForm() {
         <Button
           containerStyle={styles.button}
           title="Login"
-          onPress={loginUser}
+          onPress={() =>
+            loginUser(
+              email,
+              password,
+              (token: string) => dispatch(userAction.setToken(token)),
+              (loggedIn: boolean) => dispatch(userAction.setLoggedIn(loggedIn)),
+            )
+          }
         />
       </View>
     </>

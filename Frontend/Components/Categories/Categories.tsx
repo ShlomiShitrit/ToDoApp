@@ -5,7 +5,7 @@ import Category from '../Category/Category';
 import {ICategory, CategoriesProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import useLang from '../../hooks/useLang';
-import {API_HOST} from '@env';
+import {getCategories} from '../../general/api';
 import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
 
 export default function Categories({
@@ -25,20 +25,7 @@ export default function Categories({
   const isLoggedIn = useAppSelector(state => state.user.loggedIn);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`${API_HOST}api/User/categories`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchCategories();
+    getCategories(userToken, setCategories);
   }, [userToken, isUpdate]);
 
   return (

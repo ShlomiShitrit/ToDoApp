@@ -3,7 +3,12 @@ import {StyleSheet} from 'react-native';
 import {Dialog, Input} from '@rneui/themed';
 import {AddTaskDialogProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
-import {API_HOST} from '@env';
+import {createTask} from '../../general/api';
+import {
+  postOrPutTaskObj,
+  createTaskDataObj,
+  createTaskObjCallback,
+} from '../../general/types';
 
 export default function AddTaskDialog({
   open,
@@ -19,50 +24,26 @@ export default function AddTaskDialog({
 
   const userToken = useAppSelector(state => state.user.token);
 
-  const onSubmit = async () => {
-    const catUrl = isSubCategory
-      ? `subcategory?subCategoryId=${category?.id}`
-      : `category?categoryId=${category?.id}`;
-    const url = method === 'POST' ? `Task/${catUrl}` : `Task/${task?.id}`;
-    const taskObj =
-      method === 'POST'
-        ? {
-            title: taskTitle,
-            subTitle: taskSubTitle,
-          }
-        : {
-            id: task?.id,
-            title: taskTitle,
-            subTitle: taskSubTitle,
-            checked: task?.checked,
-            categoryId: task?.categoryId,
-            subCategoryId: task?.subCategoryId,
-          };
-    try {
-      const response = await fetch(`${API_HOST}api/${url}`, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: JSON.stringify(taskObj),
-      });
-
-      if (response.ok) {
-        console.log('Task added successfully');
-        setTaskTitle('');
-        setTaskSubTitle('');
-        onUpdate();
-        onBackPress();
-      } else {
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.message || 'Something went wrong');
-      }
-    } catch (error) {
-      console.log('Error adding task: ');
-      console.log(error);
-    }
+  const generalData: postOrPutTaskObj = {
+    isSubCategory,
+    category,
+    userToken,
+    task,
+    method,
   };
+
+  const taskData: createTaskDataObj = {
+    taskTitle,
+    taskSubTitle,
+  };
+
+  const callbackObj: createTaskObjCallback = {
+    setTaskTitle,
+    setTaskSubTitle,
+    onUpdate,
+    onBackPress,
+  };
+
   return (
     <Dialog isVisible={open} onBackdropPress={onBackPress}>
       <Dialog.Title title={'Add task'} />
@@ -82,7 +63,10 @@ export default function AddTaskDialog({
       />
       <Dialog.Actions>
         <Dialog.Button title="Cancel" onPress={onBackPress} />
-        <Dialog.Button title="Submit" onPress={onSubmit} />
+        <Dialog.Button
+          title="Submit"
+          onPress={() => createTask(generalData, taskData, callbackObj)}
+        />
       </Dialog.Actions>
     </Dialog>
   );
