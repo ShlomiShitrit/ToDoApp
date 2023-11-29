@@ -5,9 +5,9 @@ export interface HeaderProps {
 }
 
 export interface TasksProps extends CategoryScreenProps {
-  tasks: ITask[];
   isEditMode: boolean;
   onUpdate: () => void;
+  isUpdate: boolean;
 }
 
 export interface GeneralCategoryProp {

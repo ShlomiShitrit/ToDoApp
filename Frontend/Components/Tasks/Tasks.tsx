@@ -11,7 +11,7 @@ import {useAppSelector} from '../../hooks/store';
 const windowWidth = Dimensions.get('window').width;
 
 export default function Tasks({
-  tasks: initialTasks,
+  isUpdate,
   category,
   isSubCategory,
   isEditMode,
@@ -26,10 +26,25 @@ export default function Tasks({
   const {dir} = useLang();
 
   useEffect(() => {
-    if (initialTasks && initialTasks.length > 0) {
-      setTasks(initialTasks);
-    }
-  }, [initialTasks]);
+    const fetchTasks = async () => {
+      try {
+        const url = isSubCategory
+          ? `SubCategory/${category?.id}/tasks`
+          : `Category/${category?.id}/tasks`;
+        const response = await fetch(`${API_HOST}api/` + url, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        const data = await response.json();
+        data.reverse();
+        setTasks(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTasks();
+  }, [userToken, category, isSubCategory, isUpdate]);
 
   useEffect(() => {
     setOpenEditDialogs(Array(tasks.length).fill(false));
@@ -109,9 +124,7 @@ export default function Tasks({
 
   return (
     <>
-      {tasks &&
-        Array.isArray(tasks) &&
-        tasks.length > 0 &&
+      {tasks && Array.isArray(tasks) && tasks.length > 0 ? (
         tasks.map((task, index) => (
           <View key={index}>
             <ListItem
@@ -149,6 +162,8 @@ export default function Tasks({
                   ) : null}
                   <ListItem.Title>
                     <Text
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
                       style={
                         task?.checked
                           ? styles.listTitleChecked
@@ -211,7 +226,16 @@ export default function Tasks({
               editHandler={() => deleteHandler(task)}
             />
           </View>
-        ))}
+        ))
+      ) : (
+        <ListItem containerStyle={styles.noItemContainer}>
+          <ListItem.Content>
+            <ListItem.Title>
+              <Text style={styles.listTitle}>No tasks yet</Text>
+            </ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
+      )}
     </>
   );
 }
@@ -280,13 +304,20 @@ const styles = StyleSheet.create({
   },
   editIconContainerRtl: {
     flexDirection: 'row',
-    marginRight: windowWidth * 0.1,
+    marginRight: windowWidth * 0.05,
   },
   editIconContainerLtr: {
     flexDirection: 'row',
-    marginLeft: windowWidth * 0.1,
+    marginLeft: windowWidth * 0.05,
   },
   editIcon: {
-    marginRight: windowWidth * 0.06,
+    marginRight: windowWidth * 0.04,
+  },
+  noItemContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#262c2e',
+    borderBottomColor: 'white',
+    borderBottomWidth: 1,
   },
 });
