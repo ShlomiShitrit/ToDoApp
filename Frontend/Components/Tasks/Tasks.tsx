@@ -3,10 +3,10 @@ import {StyleSheet, View, Dimensions} from 'react-native';
 import {Icon, ListItem, Text} from '@rneui/themed';
 import {ITask, TasksProps} from '../../general/interfaces';
 import useLang from '../../hooks/useLang';
-import {API_HOST} from '@env';
 import AddTaskDialog from '../Dialogs/AddTaskDialog';
 import DeleteCategoryDialog from '../Dialogs/DeleteCategoryDialog';
 import {useAppSelector} from '../../hooks/store';
+import {getTasks, checkTask, deleteTask} from '../../general/api';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -26,24 +26,7 @@ export default function Tasks({
   const {dir} = useLang();
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const url = isSubCategory
-          ? `SubCategory/${category?.id}/tasks`
-          : `Category/${category?.id}/tasks`;
-        const response = await fetch(`${API_HOST}api/` + url, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-        const data = await response.json();
-        data.reverse();
-        setTasks(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchTasks();
+    getTasks(category, userToken, isSubCategory, setTasks);
   }, [userToken, category, isSubCategory, isUpdate]);
 
   useEffect(() => {
@@ -60,66 +43,6 @@ export default function Tasks({
     const updatedOpenDialogs = [...openDeleteDialogs];
     updatedOpenDialogs[index] = toggleTo;
     setOpenDeleteDialogs(updatedOpenDialogs);
-  };
-
-  const checkTaskHandler = async (task: ITask) => {
-    const updatedTasks = tasks.map(t =>
-      t?.id === task?.id ? {...t, checked: !t?.checked} : t,
-    );
-
-    setTasks(updatedTasks);
-
-    const taskToUpdate = isSubCategory
-      ? {
-          ...task,
-          checked: !task?.checked,
-          subCategoryId: category?.id,
-        }
-      : {
-          ...task,
-          checked: !task?.checked,
-          categoryId: category?.id,
-        };
-
-    try {
-      const response = await fetch(`${API_HOST}api/Task/${task?.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: JSON.stringify(taskToUpdate),
-      });
-      if (response.ok) {
-        console.log('Task updated successfully');
-      } else {
-        console.log('Task update failed');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteHandler = async (task: ITask) => {
-    const updatedTasks = tasks.filter(t => t?.id !== task?.id);
-    setTasks(updatedTasks);
-
-    try {
-      const response = await fetch(`${API_HOST}api/Task/${task?.id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      if (response.ok) {
-        console.log('Task deleted successfully');
-      } else {
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.message || 'Something went wrong');
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -142,7 +65,16 @@ export default function Tasks({
                       checkedIcon="checkbox-marked"
                       uncheckedIcon="checkbox-blank-outline"
                       checked={task?.checked}
-                      onPress={() => checkTaskHandler(task)}
+                      onPress={() =>
+                        checkTask(
+                          task,
+                          tasks,
+                          setTasks,
+                          isSubCategory,
+                          category,
+                          userToken,
+                        )
+                      }
                     />
                   ) : null}
                   {isEditMode && dir === 'rtl' ? (
@@ -195,7 +127,16 @@ export default function Tasks({
                       checkedIcon="checkbox-marked"
                       uncheckedIcon="checkbox-blank-outline"
                       checked={task?.checked}
-                      onPress={() => checkTaskHandler(task)}
+                      onPress={() =>
+                        checkTask(
+                          task,
+                          tasks,
+                          setTasks,
+                          isSubCategory,
+                          category,
+                          userToken,
+                        )
+                      }
                     />
                   ) : null}
                 </View>
@@ -223,7 +164,7 @@ export default function Tasks({
             <DeleteCategoryDialog
               open={openDeleteDialogs[index]}
               onBackPress={() => toggleDeleteDialog(index, false)}
-              editHandler={() => deleteHandler(task)}
+              editHandler={() => deleteTask(task, tasks, setTasks, userToken)}
             />
           </View>
         ))
