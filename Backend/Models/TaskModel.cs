@@ -10,6 +10,7 @@ namespace Backend.Models
         public Category? Category { get; set; }
         public int? SubCategoryId { get; set; }
         public SubCategory? SubCategory { get; set; }
+        public DateTime? Date { get; set; }
 
     }
 }

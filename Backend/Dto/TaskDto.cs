@@ -8,5 +8,6 @@ namespace Backend.Dto
         public bool Checked { get; set; }
         public int? CategoryId { get; set; }
         public int? SubCategoryId { get; set; }
+        public DateTime? Date { get; set; }
     }
 }

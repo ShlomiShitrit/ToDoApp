@@ -59,6 +59,7 @@ export interface ITask {
   title: string;
   subTitle: string;
   checked: boolean;
+  date?: string;
   categoryId?: number;
   subCategoryId?: number;
 }

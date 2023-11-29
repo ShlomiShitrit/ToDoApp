@@ -41,4 +41,5 @@ export type postOrPutTaskObj = {
 export type createTaskDataObj = {
   taskTitle: string;
   taskSubTitle: string;
+  taskDate: string;
 };

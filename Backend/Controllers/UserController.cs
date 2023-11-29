@@ -115,6 +115,26 @@ namespace Backend.Controllers
             return Ok(userFromDb);
         }
 
+        [HttpGet("tasks")]
+        [Authorize]
+        public IActionResult GetTasksOfUser()
+        {
+            var currentUser = GetCurrentUser();
+
+            if (currentUser == null)
+                return NotFound("No user is logged in");
+
+            if (!_userRepository.UserExists(currentUser.Id))
+                return NotFound();
+
+            var tasks = _mapper.Map<List<TaskDto>>(_userRepository.GetTasks(currentUser.Id));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tasks);
+        }
+
         internal User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity ?? null;

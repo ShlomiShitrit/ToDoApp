@@ -156,12 +156,14 @@ export async function createTask(
       ? {
           title: taskDataObj.taskTitle,
           subTitle: taskDataObj.taskSubTitle,
+          date: taskDataObj.taskDate,
         }
       : {
           id: dataObj.task?.id,
           title: taskDataObj.taskTitle,
           subTitle: taskDataObj.taskSubTitle,
           checked: dataObj.task?.checked,
+          date: taskDataObj.taskDate,
           categoryId: dataObj.task?.categoryId,
           subCategoryId: dataObj.task?.subCategoryId,
         };
