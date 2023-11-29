@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Icon} from '@rneui/themed';
 import {useAppSelector} from '../../hooks/store';
-import {EditCategoryIconsProps, ITask} from '../../general/interfaces';
-import {API_HOST} from '@env';
+import {EditCategoryIconsProps} from '../../general/interfaces';
+import {deleteCategoryOrSub} from '../../general/api';
 import UpdateCategoryDialog from '../Dialogs/UpdateCategoryDialog';
 import DeleteCategoryDialog from '../Dialogs/DeleteCategoryDialog';
 
@@ -20,60 +20,6 @@ export default function EditCategoryIcons({
     dir === 'rtl' ? styles.editMarginRtl : styles.editMarginLtr;
 
   const userToken = useAppSelector(state => state.user.token);
-
-  const deleteHandler = async () => {
-    const url = isSubCategory ? 'SubCategory' : 'Category';
-
-    try {
-      const taskResponse = await fetch(
-        `${API_HOST}api/${url}/${category?.id}/tasks`,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        },
-      );
-
-      const taskData = await taskResponse.json();
-      taskData.forEach(async (task: ITask) => {
-        try {
-          const response = await fetch(`${API_HOST}api/Task/${task?.id}`, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          });
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      const response = await fetch(`${API_HOST}api/${url}/${category?.id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      if (response.ok) {
-        setOpenDelete(false);
-        onUpdate();
-        console.log('Deleted');
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <>
@@ -100,7 +46,15 @@ export default function EditCategoryIcons({
       <DeleteCategoryDialog
         open={openDelete}
         onBackPress={() => setOpenDelete(false)}
-        editHandler={deleteHandler}
+        editHandler={() =>
+          deleteCategoryOrSub(
+            isSubCategory,
+            category,
+            userToken,
+            setOpenDelete,
+            onUpdate,
+          )
+        }
       />
     </>
   );

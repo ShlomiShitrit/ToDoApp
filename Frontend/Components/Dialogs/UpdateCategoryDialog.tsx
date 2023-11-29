@@ -3,10 +3,13 @@ import {View, StyleSheet} from 'react-native';
 import {Input, Dialog} from '@rneui/themed';
 import IconsForm from '../Forms/IconsForm';
 import ColorsForm from '../Forms/ColorsForm';
-import {categoryIcon} from '../../general/types';
+import {
+  categoryIcon,
+  createCategoryOrSubObjCallback,
+} from '../../general/types';
 import {useAppSelector} from '../../hooks/store';
 import {UpdateCategoryProps} from '../../general/interfaces';
-import {API_HOST} from '@env';
+import {getUserInfo, updateCategory} from '../../general/api';
 
 export default function UpdateCategoryDialog({
   open,
@@ -24,58 +27,8 @@ export default function UpdateCategoryDialog({
   const userToken = useAppSelector(state => state.user.token);
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const response = await fetch(`${API_HOST}api/User/userinfo`, {
-          headers: {Authorization: `Bearer ${userToken}`},
-        });
-        const userInfo = await response.json();
-        setUserId(userInfo.id);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getUserInfo();
+    getUserInfo(userToken, setUserId);
   }, [userToken]);
-
-  const editHandler = async () => {
-    const categoryToPut = {
-      id: category?.id,
-      name: categoryName,
-      iconName: iconToAdd?.name,
-      iconType: iconToAdd?.type,
-      colorHash: clickedColor,
-    };
-
-    const isSubUrl = isSubCategory
-      ? `SubCategory/${category?.id}?categoryId=${category.categoryId}`
-      : `Category/${category?.id}?userId=${userId}`;
-    const url = `${API_HOST}api/${isSubUrl}`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: JSON.stringify(categoryToPut),
-      });
-      if (response.ok) {
-        console.log('Edited');
-        setCategoryName('');
-        setClickedIcon(null);
-        setClickedColor(null);
-        onUpdate();
-        onBackPress();
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const titleCat = isSubCategory ? 'subcategory' : 'category';
 
@@ -87,6 +40,14 @@ export default function UpdateCategoryDialog({
   const clearIcon = () => {
     setIconToAdd(null);
     setClickedIcon(null);
+  };
+
+  const callbackObj: createCategoryOrSubObjCallback = {
+    setCategoryName,
+    setClickedIcon,
+    setClickedColor,
+    onUpdate,
+    onBackPress,
   };
   return (
     <Dialog
@@ -118,7 +79,21 @@ export default function UpdateCategoryDialog({
       />
       <Dialog.Actions>
         <Dialog.Button title="Cancel" onPress={onBackPress} />
-        <Dialog.Button title="Submit" onPress={editHandler} />
+        <Dialog.Button
+          title="Submit"
+          onPress={() =>
+            updateCategory(
+              callbackObj,
+              category,
+              categoryName,
+              iconToAdd,
+              clickedColor,
+              isSubCategory,
+              userId,
+              userToken,
+            )
+          }
+        />
       </Dialog.Actions>
     </Dialog>
   );
