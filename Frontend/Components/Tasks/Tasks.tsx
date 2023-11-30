@@ -56,102 +56,119 @@ export default function Tasks({
                 dir === 'rtl' ? styles.alignItemsRtl : styles.alignItemsLtr,
               ]}>
               <ListItem.Content>
-                <View style={styles.rowContainer}>
-                  {dir === 'ltr' ? (
-                    <ListItem.CheckBox
-                      containerStyle={styles.checkBoxContainerLtr}
-                      checkedColor="white"
-                      iconType="material-community"
-                      checkedIcon="checkbox-marked"
-                      uncheckedIcon="checkbox-blank-outline"
-                      checked={task?.checked}
-                      onPress={() =>
-                        checkTask(
-                          task,
-                          tasks,
-                          setTasks,
-                          isSubCategory,
-                          category,
-                          userToken,
-                        )
-                      }
-                    />
-                  ) : null}
-                  {isEditMode && dir === 'rtl' ? (
-                    <View style={styles.editIconContainerRtl}>
-                      <Icon
-                        name="edit"
-                        type="materialIcon"
-                        style={styles.editIcon}
-                        onPress={() => toggleEditDialog(index, true)}
+                <View>
+                  <View style={styles.rowContainer}>
+                    {dir === 'ltr' ? (
+                      <ListItem.CheckBox
+                        containerStyle={styles.checkBoxContainerLtr}
+                        checkedColor="white"
+                        iconType="material-community"
+                        checkedIcon="checkbox-marked"
+                        uncheckedIcon="checkbox-blank-outline"
+                        checked={task?.checked}
+                        onPress={() =>
+                          checkTask(
+                            task,
+                            tasks,
+                            setTasks,
+                            isSubCategory,
+                            category,
+                            userToken,
+                          )
+                        }
                       />
-                      <Icon
-                        name="delete"
-                        type="materialIcon"
-                        onPress={() => toggleDeleteDialog(index, true)}
+                    ) : null}
+                    {isEditMode && dir === 'rtl' ? (
+                      <View style={styles.editIconContainerRtl}>
+                        <Icon
+                          name="edit"
+                          type="materialIcon"
+                          style={styles.editIcon}
+                          onPress={() => toggleEditDialog(index, true)}
+                        />
+                        <Icon
+                          name="delete"
+                          type="materialIcon"
+                          onPress={() => toggleDeleteDialog(index, true)}
+                        />
+                      </View>
+                    ) : null}
+                    <ListItem.Title style={styles.listTitleContainer}>
+                      <Text
+                        numberOfLines={3}
+                        ellipsizeMode="tail"
+                        style={
+                          task?.checked
+                            ? styles.listTitleChecked
+                            : styles.listTitle
+                        }>
+                        {task?.title}
+                      </Text>
+                    </ListItem.Title>
+                    {isEditMode && dir === 'ltr' ? (
+                      <View style={styles.editIconContainerLtr}>
+                        <Icon
+                          name="edit"
+                          type="materialIcon"
+                          style={styles.editIcon}
+                          onPress={() => toggleEditDialog(index, true)}
+                        />
+                        <Icon
+                          name="delete"
+                          type="materialIcon"
+                          onPress={() => toggleDeleteDialog(index, true)}
+                        />
+                      </View>
+                    ) : null}
+                    {dir === 'rtl' ? (
+                      <ListItem.CheckBox
+                        containerStyle={styles.checkBoxContainerRtl}
+                        checkedColor="white"
+                        iconType="material-community"
+                        checkedIcon="checkbox-marked"
+                        uncheckedIcon="checkbox-blank-outline"
+                        checked={task?.checked}
+                        onPress={() =>
+                          checkTask(
+                            task,
+                            tasks,
+                            setTasks,
+                            isSubCategory,
+                            category,
+                            userToken,
+                          )
+                        }
                       />
-                    </View>
-                  ) : null}
-                  <ListItem.Title>
-                    <Text
-                      numberOfLines={2}
-                      ellipsizeMode="tail"
+                    ) : null}
+                  </View>
+                  <View style={styles.subTitleContainer}>
+                    <ListItem.Subtitle
                       style={
                         task?.checked
-                          ? styles.listTitleChecked
-                          : styles.listTitle
+                          ? styles.listSubtitleChecked
+                          : styles.listSubtitle
                       }>
-                      {task?.title}
-                    </Text>
-                  </ListItem.Title>
-                  {isEditMode && dir === 'ltr' ? (
-                    <View style={styles.editIconContainerLtr}>
-                      <Icon
-                        name="edit"
-                        type="materialIcon"
-                        style={styles.editIcon}
-                        onPress={() => toggleEditDialog(index, true)}
-                      />
-                      <Icon
-                        name="delete"
-                        type="materialIcon"
-                        onPress={() => toggleDeleteDialog(index, true)}
-                      />
-                    </View>
-                  ) : null}
-                  {dir === 'rtl' ? (
-                    <ListItem.CheckBox
-                      containerStyle={styles.checkBoxContainerRtl}
-                      checkedColor="white"
-                      iconType="material-community"
-                      checkedIcon="checkbox-marked"
-                      uncheckedIcon="checkbox-blank-outline"
-                      checked={task?.checked}
-                      onPress={() =>
-                        checkTask(
-                          task,
-                          tasks,
-                          setTasks,
-                          isSubCategory,
-                          category,
-                          userToken,
-                        )
-                      }
-                    />
-                  ) : null}
-                </View>
-                <View style={styles.subTitleContainer}>
+                      {task?.subTitle}
+                    </ListItem.Subtitle>
+                  </View>
                   <ListItem.Subtitle
                     style={
                       task?.checked
                         ? styles.listSubtitleChecked
                         : styles.listSubtitle
                     }>
-                    {task?.subTitle}
+                    {task?.date === undefined
+                      ? ''
+                      : `Date: ${task?.date
+                          .split('T')[0]
+                          .split('-')
+                          .reverse()
+                          .join('/')}`}
                   </ListItem.Subtitle>
                 </View>
               </ListItem.Content>
             </ListItem>
+
             <AddTaskDialog
               open={openEditDialogs[index]}
               onBackPress={() => toggleEditDialog(index, false)}
@@ -188,7 +205,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#262c2e',
     borderBottomColor: 'white',
     borderBottomWidth: 1,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   alignItemsRtl: {
     alignItems: 'flex-end',
@@ -198,7 +215,8 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    width: '100%',
     marginBottom: 20,
   },
   listTitle: {
@@ -216,8 +234,8 @@ const styles = StyleSheet.create({
   listSubtitle: {
     color: 'white',
     fontSize: 14,
-    marginRight: '10%',
     paddingTop: '2%',
+    paddingBottom: '5%',
   },
   listSubtitleChecked: {
     color: 'grey',
@@ -238,21 +256,19 @@ const styles = StyleSheet.create({
   },
   subTitleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    position: 'absolute',
-    top: '85%',
-    right: 0,
+    justifyContent: 'flex-end',
   },
   editIconContainerRtl: {
     flexDirection: 'row',
-    marginRight: windowWidth * 0.05,
   },
   editIconContainerLtr: {
     flexDirection: 'row',
-    marginLeft: windowWidth * 0.05,
   },
   editIcon: {
     marginRight: windowWidth * 0.04,
+  },
+  listTitleContainer: {
+    width: '70%',
   },
   noItemContainer: {
     flex: 1,
