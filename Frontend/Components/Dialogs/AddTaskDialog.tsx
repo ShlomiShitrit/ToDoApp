@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {Dialog, Input, Button} from '@rneui/themed';
+import {StyleSheet, View} from 'react-native';
+import {Dialog, Input, Button, Icon, Text} from '@rneui/themed';
 import {AddTaskDialogProps} from '../../general/interfaces';
 import {useAppSelector} from '../../hooks/store';
 import {createTask} from '../../general/api';
@@ -22,15 +22,22 @@ export default function AddTaskDialog({
 }: AddTaskDialogProps): JSX.Element {
   const [taskTitle, setTaskTitle] = useState<string>('');
   const [taskSubTitle, setTaskSubTitle] = useState<string>('');
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
+  const [date, setDate] = useState<Date>(new Date());
+  const [showPicker, setShowPicker] = useState<boolean>(false);
+  const [dateText, setDateText] = useState<string>('');
 
   const userToken = useAppSelector(state => state.user.token);
+
+  const dateToText = (dateInput: Date): string => {
+    const onlyDate = dateInput.toISOString().split('T')[0];
+    return onlyDate.split('-').reverse().join('/');
+  };
 
   const onChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setShowPicker(false);
     setDate(currentDate);
+    setDateText(dateToText(currentDate));
   };
   console.log(date);
 
@@ -45,7 +52,7 @@ export default function AddTaskDialog({
   const taskData: createTaskDataObj = {
     taskTitle,
     taskSubTitle,
-    taskDate: date.toISOString(),
+    taskDate: date.toISOString().split('T')[0],
   };
 
   const callbackObj: createTaskObjCallback = {
@@ -76,17 +83,22 @@ export default function AddTaskDialog({
         onChangeText={setTaskSubTitle}
         value={taskSubTitle}
       />
-      <Button
-        containerStyle={styles.button}
-        onPress={showDatepicker}
-        title="Add date"
-      />
+      <View style={styles.dateContainer}>
+        <Button containerStyle={styles.button} onPress={showDatepicker}>
+          Add date
+          <Icon name="date-range" type="materialIcons" />
+        </Button>
+        <Text style={styles.dateTextInput}>
+          {dateText || dateToText(new Date())}
+        </Text>
+      </View>
+
       {showPicker ? (
         <DateTimePicker
           value={date}
           mode="date"
-          minimumDate={new Date(2023, 11, 29)}
-          maximumDate={new Date(2050, 11, 29)}
+          minimumDate={new Date(2023, 10, 29)}
+          maximumDate={new Date(2050, 10, 29)}
           positiveButton={{label: 'Confirm', textColor: 'green'}}
           negativeButton={{label: 'Cancel', textColor: 'red'}}
           onChange={onChange}
@@ -112,5 +124,19 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center',
     borderRadius: 20,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateTextInput: {
+    color: 'white',
+    fontSize: 18,
+    borderColor: 'white',
+    borderWidth: 1,
+    padding: '5%',
+    marginTop: '5%',
+    marginLeft: '5%',
   },
 });
