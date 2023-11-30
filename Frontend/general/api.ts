@@ -422,3 +422,64 @@ export async function deleteTask(
     console.log(error);
   }
 }
+
+function setMinimumTime(date: Date, start: boolean): Date {
+  const newDate = new Date(date);
+  if (start) {
+    newDate.setHours(0, 0, 0, 0);
+  } else {
+    newDate.setHours(23, 59, 59, 999);
+  }
+  return newDate;
+}
+
+export async function getAllWeeklyTask(callback: Function, userToken: string) {
+  try {
+    const response = await fetch(`${API_HOST}api/User/tasks`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      data.reverse();
+      data.sort((a: ITask, b: ITask) => {
+        if (a?.date === undefined && b?.date === undefined) {
+          return 0;
+        } else if (a?.date === undefined) {
+          return 1;
+        } else if (b?.date === undefined) {
+          return -1;
+        } else {
+          const aDate = new Date(a?.date);
+          const bDate = new Date(b?.date);
+          return aDate.getTime() - bDate.getTime();
+        }
+      });
+      const currentDate = new Date();
+      const minimumDate = setMinimumTime(currentDate, true);
+
+      const oneWeekLater = new Date(
+        currentDate.getTime() + 7 * 24 * 60 * 60 * 1000,
+      );
+      const maximumDate = setMinimumTime(oneWeekLater, false);
+
+      const thisWeekTasks = data.filter((task: ITask) => {
+        if (task?.date !== undefined) {
+          const taskDate = new Date(task?.date);
+          return (
+            taskDate >= minimumDate && taskDate <= maximumDate && !task?.checked
+          );
+        } else {
+          return false;
+        }
+      });
+      callback(thisWeekTasks);
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

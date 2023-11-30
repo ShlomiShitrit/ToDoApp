@@ -22,7 +22,7 @@ export default function AddTaskDialog({
 }: AddTaskDialogProps): JSX.Element {
   const [taskTitle, setTaskTitle] = useState<string>('');
   const [taskSubTitle, setTaskSubTitle] = useState<string>('');
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [dateText, setDateText] = useState<string>('');
 
@@ -39,7 +39,6 @@ export default function AddTaskDialog({
     setDate(currentDate);
     setDateText(dateToText(currentDate));
   };
-  console.log(date);
 
   const generalData: postOrPutTaskObj = {
     isSubCategory,
@@ -52,7 +51,7 @@ export default function AddTaskDialog({
   const taskData: createTaskDataObj = {
     taskTitle,
     taskSubTitle,
-    taskDate: date.toISOString().split('T')[0],
+    taskDate: date.toISOString(),
   };
 
   const callbackObj: createTaskObjCallback = {
