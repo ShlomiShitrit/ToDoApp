@@ -25,6 +25,20 @@ namespace Backend.Repositories
             return _context.Categories.Where(c => c.UserId == userId).OrderBy(c => c.Id).ToList();
         }
 
+        public ICollection<TaskModel> GetTasks(int userId)
+        {
+            var tasks = new List<TaskModel>();
+            var categoryTasks = _context.Categories.Where(c => c.UserId == userId)
+                                                  .SelectMany(c => c.Tasks)
+                                                  .ToList();
+            var subcategoryTasks = _context.SubCategories.Where(s => s.Category.UserId == userId)
+                                                        .SelectMany(s => s.Tasks)
+                                                        .ToList();
+            tasks.AddRange(categoryTasks);
+            tasks.AddRange(subcategoryTasks);
+            return tasks;
+        }
+
         public User? GetUserByEmailAndPassword(string email, string password)
         {
             return _context.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();

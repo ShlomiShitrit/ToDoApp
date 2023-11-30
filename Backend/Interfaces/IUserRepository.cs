@@ -11,6 +11,7 @@ namespace Backend.Interfaces
         public bool UpdateUser(User user);
         public bool DeleteUser(User user);
         public ICollection<Category> GetCategories(int userId);
+        public ICollection<TaskModel> GetTasks(int userId);
         public User? GetUserByEmailAndPassword(string email, string password);
         public bool Save();
     }
