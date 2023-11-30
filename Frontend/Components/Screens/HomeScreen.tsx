@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Text, ListItem} from '@rneui/themed';
 import {useAppSelector} from '../../hooks/store';
 import {EMPTY_WEEKLY_TASKS} from '../../general/resources';
+import {getAllWeeklyTask} from '../../general/api';
 import {ITask} from '../../general/interfaces';
 import {View, ScrollView, StyleSheet, Dimensions} from 'react-native';
 
@@ -9,23 +10,14 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function HomeScreen(): JSX.Element {
   const [weeklyTasks, setWeeklyTasks] = useState<ITask[]>(EMPTY_WEEKLY_TASKS);
-  const [categoryTasks, setCategoryTasks] =
-    useState<ITask[]>(EMPTY_WEEKLY_TASKS);
-  const [subCategoryTasks, setSubCategoryTasks] =
-    useState<ITask[]>(EMPTY_WEEKLY_TASKS);
 
   const userFirstName = useAppSelector(state => state.user.userInfo.firstName);
   const userLastName = useAppSelector(state => state.user.userInfo.lastName);
+  const userToken = useAppSelector(state => state.user.token);
 
   useEffect(() => {
-    // TODO: Get all tasks of the user from API
-    // callback to setCategoryTasks and setSubCategoryTasks
-    // filter the tasks by date - only the upcoming week tasks
-  }, []);
-
-  useEffect(() => {
-    setWeeklyTasks([...categoryTasks, ...subCategoryTasks]);
-  }, [categoryTasks, subCategoryTasks]);
+    getAllWeeklyTask(setWeeklyTasks, userToken);
+  }, [userToken]);
 
   const date = new Date();
   return (
@@ -39,10 +31,14 @@ export default function HomeScreen(): JSX.Element {
         {date.toLocaleDateString()}
       </Text>
       <View style={styles.taskContainer}>
+        <Text h4>Your tasks for the week are:</Text>
         {weeklyTasks && Array.isArray(weeklyTasks) && weeklyTasks.length > 0 ? (
           <ScrollView style={styles.scrollViewContainer}>
             {weeklyTasks.map((task, index) => (
-              <ListItem key={index} bottomDivider>
+              <ListItem
+                key={index}
+                bottomDivider
+                containerStyle={styles.listItem}>
                 <ListItem.Content>
                   <ListItem.Title style={styles.itemTitle}>
                     {task?.title}
@@ -51,7 +47,7 @@ export default function HomeScreen(): JSX.Element {
                     {task?.subTitle}
                   </ListItem.Subtitle>
                   <ListItem.Subtitle style={styles.itemDate}>
-                    {date.toLocaleDateString()}
+                    {task?.date?.split('T')[0].split('-').reverse().join('/')}
                   </ListItem.Subtitle>
                 </ListItem.Content>
               </ListItem>
@@ -93,6 +89,9 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     width: '100%',
     height: windowHeight * 0.5,
+  },
+  listItem: {
+    backgroundColor: '#262c2e',
   },
   title: {
     color: 'white',
